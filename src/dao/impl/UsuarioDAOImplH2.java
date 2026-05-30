@@ -49,8 +49,8 @@ public class UsuarioDAOImplH2 implements UsuarioDAO {
     }
 
 
-    public void borrarUsuario(String nombre) {
-        String sql = "DELETE FROM usuarios WHERE nombre = '" + nombre + "'";
+    public void borrarUsuario(int dni) throws DAOException {
+        String sql = "DELETE FROM usuarios WHERE dni = '" + dni + "'";
         Connection c = DBManager.connect();
         try {
             Statement s = c.createStatement();

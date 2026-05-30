@@ -8,7 +8,7 @@ import java.util.List;
 public interface UsuarioDAO {
     void crearUsuario(Usuario unUsuario) throws DAOException;
 
-    void borrarUsuario(String user);
+    void borrarUsuario(int dni) throws DAOException;
 
     void actualizarUsuario(Usuario unUsuario) throws DAOException;
 

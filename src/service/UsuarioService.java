@@ -50,4 +50,13 @@ public class UsuarioService {
             throw new ServiceException();
         }
     }
+
+    public void eliminarUsuario(int dni) throws ServiceException {
+        try {
+            this.usuarioDAO.borrarUsuario(dni);
+            System.out.println("Usuario con DNI " + dni + " fue eliminado correctamente!");
+        } catch (DAOException e) {
+            throw new ServiceException();
+        }
+    }
 }

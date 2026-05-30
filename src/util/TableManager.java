@@ -10,7 +10,7 @@ public class TableManager {
 		
 		Connection c = DBManager.connect();
 		
-		String sql = "CREATE TABLE usuarios (id IDENTITY, nombre VARCHAR(256) UNIQUE, apellido VARCHAR(256), dni INTEGER)";
+		String sql = "CREATE TABLE usuarios (id IDENTITY, nombre VARCHAR(256), apellido VARCHAR(256), dni INTEGER UNIQUE, rol varchar(256))";
 		
 		try {
 			Statement s = c.createStatement();

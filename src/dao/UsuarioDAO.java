@@ -12,7 +12,7 @@ public interface UsuarioDAO {
 
     void actualizarUsuario(Usuario unUsuario) throws DAOException;
 
-    Usuario muestraUsuario(String user);
+    Usuario muestraUsuario(int dni) throws DAOException;
 
     List<Usuario> listaTodosLosUsuarios() throws DAOException;
 

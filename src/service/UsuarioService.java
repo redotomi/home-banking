@@ -15,9 +15,9 @@ public class UsuarioService {
         this.usuarioDAO = usuarioDAO;
     }
 
-    public void agregarUsuario(Usuario paciente) throws ServiceException {
+    public void agregarUsuario(Usuario usuario) throws ServiceException {
         try {
-            this.usuarioDAO.crearUsuario(paciente);
+            this.usuarioDAO.crearUsuario(usuario);
         } catch (ObjetoDuplicadoException e) {
             throw new ServiceException("GRAVE", e);
         } catch (DAOException e) {
@@ -32,6 +32,14 @@ public class UsuarioService {
             throw new ServiceException();
         }
 
+    }
+
+    public Usuario buscarUsuario(int dniUsuario) throws ServiceException {
+        try {
+            return this.usuarioDAO.muestraUsuario(dniUsuario);
+        } catch (DAOException e) {
+            throw new ServiceException("No se encontró el usuario");
+        }
     }
 
     public void actualizarUsuario(Usuario usuario) throws ServiceException {

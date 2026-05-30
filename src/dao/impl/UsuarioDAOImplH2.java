@@ -104,8 +104,8 @@ public class UsuarioDAOImplH2 implements UsuarioDAO {
 
     /*para crear, editar o borrar se usa el .executeUpdate()
      * y para mostrar/consultar algo a la base de datos, uso el .executeQuery()*/
-    public Usuario muestraUsuario(String nombre) {
-        String sql = "SELECT * FROM usuarios WHERE nombre = '" + nombre + "'";
+    public Usuario muestraUsuario(int dni) {
+        String sql = "SELECT * FROM usuarios WHERE dni = '" + dni + "'";
         Connection c = DBManager.connect();
         try {
             Statement s = c.createStatement();
@@ -117,8 +117,8 @@ public class UsuarioDAOImplH2 implements UsuarioDAO {
                 int id = rs.getInt("id");
                 String nombreUsuario = rs.getString("nombre");
                 String apellido = rs.getString("apellido");
-                int dni = rs.getInt("dni");
-                Usuario p = new Usuario(nombreUsuario, apellido, dni);
+                int dniUsuario = rs.getInt("dni");
+                Usuario p = new Usuario(id, nombreUsuario, apellido, dniUsuario);
                 return p;
             }
         } catch (SQLException e) { // aca tengo que poner mis propias exceptions
@@ -154,7 +154,7 @@ public class UsuarioDAOImplH2 implements UsuarioDAO {
                 String user = rs.getString("nombre");
                 String apellido = rs.getString("apellido");
                 int dni = rs.getInt("dni");
-                Usuario p = new Usuario(user, apellido, dni);
+                Usuario p = new Usuario(id, user, apellido, dni);
                 resultado.add(p); // por cada usuario nuevo que encuentro, lo guardo en esta lista
             }
         } catch (SQLException e) {

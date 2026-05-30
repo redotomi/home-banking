@@ -26,6 +26,7 @@ public class TablaUsuariosPanel extends JPanel implements ActionListener, Printa
     private JButton botonLlenar;
     private JButton botonAgregar;
     private JButton botonImprimir;
+    private JButton botonEliminar;
 
     private UsuarioService usuarioService;
 
@@ -64,6 +65,10 @@ public class TablaUsuariosPanel extends JPanel implements ActionListener, Printa
         botonAgregar.addActionListener(this);
         this.add(botonAgregar);
 
+        botonEliminar = new JButton("Eliminar fila");
+        botonEliminar.addActionListener(this);
+        this.add(botonEliminar);
+
         botonImprimir = new JButton("Imprimir Tabla");
         botonImprimir.addActionListener(this);
         this.add(botonImprimir);
@@ -80,6 +85,21 @@ public class TablaUsuariosPanel extends JPanel implements ActionListener, Printa
                     job.print();
                 } catch (PrinterException ex) {
                     /* The job did not successfully complete */
+                }
+            }
+
+        } else if (e.getSource() == botonEliminar) {
+            int filaSeleccionada = tablaUsuarios.getSelectedRow();
+            if (filaSeleccionada == -1) {
+                JOptionPane.showMessageDialog(this, "Seleccioná una fila para eliminar.", "Sin selección", JOptionPane.WARNING_MESSAGE);
+            } else {
+                try {
+                    int dni = (int) model.getValueAt(filaSeleccionada, TablaUsuariosModel.COLUMNA_DNI);
+                    usuarioService.eliminarUsuario(dni);
+                    model.getFilas().remove(filaSeleccionada);
+                    model.fireTableDataChanged();
+                } catch (ServiceException ex) {
+                    ex.printStackTrace();
                 }
             }
 

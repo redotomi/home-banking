@@ -10,7 +10,7 @@ public class TablaUsuariosModel extends AbstractTableModel {
     private static final int COLUMNA_ID = 0;
     private static final int COLUMNA_NOMBRE = 1;
     private static final int COLUMNA_APELLIDO = 2;
-    private static final int COLUMNA_DNI = 3;
+    static final int COLUMNA_DNI = 3;
 
 
     private String[] nombresColumnas = {"ID", "Nombre", "Apellido", "DNI"};

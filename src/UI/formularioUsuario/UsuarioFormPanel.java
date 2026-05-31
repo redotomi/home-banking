@@ -4,6 +4,7 @@ import UI.PanelManager;
 import entidades.Administrador;
 import entidades.Cliente;
 import entidades.Usuario;
+import exceptions.UIExceptions.EntradaInvalidaException;
 import exceptions.serviceExceptions.DniDuplicadoException;
 import exceptions.serviceExceptions.ServiceException;
 import service.UsuarioService;
@@ -97,35 +98,22 @@ public class UsuarioFormPanel extends JPanel implements ActionListener {
         }
 
         if (e.getSource() == botonConfirmar) {
-            // ── Validaciones de formato (responsabilidad de la UI) ────────
-            String dniTexto = campoDni.getText().trim();
-            String nombre = campoNombre.getText().trim();
-            String apellido = campoApellido.getText().trim();
-
-            if (dniTexto.isEmpty() || nombre.isEmpty() || apellido.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Completá todos los campos.", "Campos incompletos", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            int dni;
             try {
-                dni = Integer.parseInt(dniTexto);
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "El DNI debe ser un número.", "DNI inválido", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
+                // ── Validaciones de formato (responsabilidad de la UI) ────────
+                int dni = parsearCampos();
 
-            // ── Llamada al servicio (valida reglas de negocio internamente) ─
-            try {
+                String nombre = campoNombre.getText().trim();
+                String apellido = campoApellido.getText().trim();
+
+                // ── Llamada al servicio (valida reglas de negocio internamente) ─
                 if (usuarioAEditar == null) {
                     String rolElegido = (String) comboRol.getSelectedItem();
-                    Usuario nuevoUsuario;
-                    if ("Administrador".equals(rolElegido)) {
-                        nuevoUsuario = new Administrador(0, nombre, apellido, dni);
-                    } else {
-                        nuevoUsuario = new Cliente(0, nombre, apellido, dni);
-                    }
+                    Usuario nuevoUsuario = "Administrador".equals(rolElegido)
+                            ? new Administrador(0, nombre, apellido, dni)
+                            : new Cliente(0, nombre, apellido, dni);
+
                     usuarioService.agregarUsuario(nuevoUsuario);
+
                     if (modoRegistro && nuevoUsuario instanceof Cliente) {
                         JOptionPane.showMessageDialog(this, "Cuenta creada correctamente.", "Registro exitoso", JOptionPane.INFORMATION_MESSAGE);
                         panelManager.mostrarLoginPanel();
@@ -139,12 +127,31 @@ public class UsuarioFormPanel extends JPanel implements ActionListener {
                     usuarioService.actualizarUsuario(usuarioAEditar);
                     panelManager.mostrarTablaUsuariosPanel();
                 }
+
+            } catch (EntradaInvalidaException ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Entrada inválida", JOptionPane.WARNING_MESSAGE);
             } catch (DniDuplicadoException ex) {
                 JOptionPane.showMessageDialog(this, "Ya existe un usuario con ese DNI.", "DNI duplicado", JOptionPane.WARNING_MESSAGE);
             } catch (ServiceException ex) {
-                JOptionPane.showMessageDialog(this, "Error al guardar el usuario: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Error al guardar el usuario: " + ex.getMessage(), "Error del sistema", JOptionPane.ERROR_MESSAGE);
                 ex.printStackTrace();
             }
+        }
+    }
+
+
+    private int parsearCampos() throws EntradaInvalidaException {
+        String dniTexto = campoDni.getText().trim();
+        String nombre = campoNombre.getText().trim();
+        String apellido = campoApellido.getText().trim();
+
+        if (dniTexto.isEmpty() || nombre.isEmpty() || apellido.isEmpty()) {
+            throw new EntradaInvalidaException("Completá todos los campos.");
+        }
+        try {
+            return Integer.parseInt(dniTexto);
+        } catch (NumberFormatException ex) {
+            throw new EntradaInvalidaException("El DNI debe ser un número.");
         }
     }
 }

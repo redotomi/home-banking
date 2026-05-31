@@ -15,5 +15,4 @@ public interface UsuarioDAO {
     Usuario muestraUsuario(int dni) throws DAOException;
 
     List<Usuario> listaTodosLosUsuarios() throws DAOException;
-
 }

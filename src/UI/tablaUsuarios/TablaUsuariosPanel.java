@@ -94,6 +94,9 @@ public class TablaUsuariosPanel extends JPanel implements ActionListener, Printa
                     model.getFilas().remove(filaSeleccionada);
                     model.fireTableDataChanged();
                 } catch (ServiceException ex) {
+                    JOptionPane.showMessageDialog(this,
+                            "No se pudo eliminar el usuario: " + ex.getMessage(),
+                            "Error del sistema", JOptionPane.ERROR_MESSAGE);
                     ex.printStackTrace();
                 }
             }
@@ -115,8 +118,11 @@ public class TablaUsuariosPanel extends JPanel implements ActionListener, Printa
                 List<Usuario> listaUsuarios = usuarioService.consultarUsuarios();
                 model.setFilas(listaUsuarios);
                 model.fireTableDataChanged();
-            } catch (ServiceException exception) {
-                exception.printStackTrace();
+            } catch (ServiceException ex) {
+                JOptionPane.showMessageDialog(this,
+                        "No se pudo cargar la lista de usuarios: " + ex.getMessage(),
+                        "Error del sistema", JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
             }
         }
     }

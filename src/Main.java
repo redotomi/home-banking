@@ -19,20 +19,6 @@ public class Main {
         Main main = new Main();
         main.iniciarManager();
         main.showFrame();
-//        UsuarioDAO dao = new UsuarioDAOImplH2();
-//
-//        UsuarioService service = new UsuarioService(dao);
-//
-//        Usuario user = new Usuario("Jane", "DANE", 5555);
-//
-//        try {
-//            service.actualizarUsuario(user);
-//        } catch (ServiceException e) {
-//            JOptionPane.showMessageDialog(null, "ERROR! =>" + e.getMessage());
-//        }
-
-//        TableManager tm = new TableManager();
-//        tm.createUsuarioTable();
     }
 
     public void iniciarManager() {

@@ -3,6 +3,7 @@ package UI.login;
 import UI.PanelManager;
 import entidades.Administrador;
 import entidades.Usuario;
+import exceptions.UIExceptions.EntradaInvalidaException;
 import exceptions.serviceExceptions.ServiceException;
 import service.UsuarioService;
 
@@ -39,7 +40,7 @@ public class LoginPanel extends JPanel implements ActionListener {
 
     private void armarPanel() {
 
-        JLabel titulo = new JLabel("Home Banking", SwingConstants.CENTER);
+        JLabel titulo = new JLabel("LaboBank", SwingConstants.CENTER);
         this.add(titulo, BorderLayout.NORTH);
 
         JPanel centro = new JPanel(new BorderLayout(0, 10));
@@ -103,22 +104,9 @@ public class LoginPanel extends JPanel implements ActionListener {
     }
 
     private void manejarLogin() {
-        String dniTexto = campoLoginDni.getText().trim();
-
-        if (dniTexto.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Ingresá tu DNI.", "Campo vacío", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        int dni;
         try {
-            dni = Integer.parseInt(dniTexto);
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "El DNI debe ser un número.", "DNI inválido", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
+            int dni = parsearDni(campoLoginDni.getText().trim());
 
-        try {
             Usuario usuario = usuarioService.buscarUsuario(dni);
 
             if (usuario == null) {
@@ -137,13 +125,26 @@ public class LoginPanel extends JPanel implements ActionListener {
                         "Inicio de sesión exitoso", JOptionPane.INFORMATION_MESSAGE);
             }
 
+        } catch (EntradaInvalidaException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Entrada inválida", JOptionPane.WARNING_MESSAGE);
         } catch (ServiceException ex) {
             JOptionPane.showMessageDialog(this,
                     "Error al buscar el usuario: " + ex.getMessage(),
-                    "Error", JOptionPane.ERROR_MESSAGE);
+                    "Error del sistema", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
+    private int parsearDni(String texto) throws EntradaInvalidaException {
+        if (texto.isEmpty()) {
+            throw new EntradaInvalidaException("Ingresá tu DNI.");
+        }
+        try {
+            return Integer.parseInt(texto);
+        } catch (NumberFormatException ex) {
+            throw new EntradaInvalidaException("El DNI debe ser un número.");
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == botonIniciarSesion) {

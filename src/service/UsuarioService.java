@@ -28,7 +28,7 @@ public class UsuarioService {
         } catch (ObjetoDuplicadoException e) {
             throw new DniDuplicadoException(usuario.getDni());
         } catch (DAOException e) {
-            throw new ServiceException(e);
+            throw new ServiceException("Error al agregar el usuario", e);
         }
     }
 
@@ -36,16 +36,15 @@ public class UsuarioService {
         try {
             return this.usuarioDAO.listaTodosLosUsuarios();
         } catch (DAOException e) {
-            throw new ServiceException();
+            throw new ServiceException("Error al consultar los usuarios", e);
         }
-
     }
 
     public Usuario buscarUsuario(int dniUsuario) throws ServiceException {
         try {
             return this.usuarioDAO.muestraUsuario(dniUsuario);
         } catch (DAOException e) {
-            throw new ServiceException("No se encontró el usuario");
+            throw new ServiceException("Error al buscar el usuario", e);
         }
     }
 
@@ -56,20 +55,20 @@ public class UsuarioService {
                 throw new DniDuplicadoException(usuario.getDni());
             }
             this.usuarioDAO.actualizarUsuario(usuario);
-            System.out.println("Usuario: " + usuario.getNombre() + " modificado correctamente!");
         } catch (DniDuplicadoException e) {
             throw e;
+        } catch (ObjetoDuplicadoException e) {
+            throw new DniDuplicadoException(usuario.getDni());
         } catch (DAOException e) {
-            throw new ServiceException(e);
+            throw new ServiceException("Error al actualizar el usuario", e);
         }
     }
 
     public void eliminarUsuario(int dni) throws ServiceException {
         try {
             this.usuarioDAO.borrarUsuario(dni);
-            System.out.println("Usuario con DNI " + dni + " fue eliminado correctamente!");
         } catch (DAOException e) {
-            throw new ServiceException();
+            throw new ServiceException("Error al eliminar el usuario con DNI: " + dni, e);
         }
     }
 }

@@ -32,6 +32,7 @@ public class PanelManager {
 
     public void mostrarTablaUsuariosPanel() {
         frame.getContentPane().removeAll();
+        frame.setTitle("LaboBank - Admin");
         frame.getContentPane().add(tablaUsuariosPanel);
         frame.getContentPane().validate();
         frame.getContentPane().repaint();
@@ -55,6 +56,7 @@ public class PanelManager {
 
     public void mostrarLoginPanel() {
         frame.getContentPane().removeAll();
+        frame.setTitle("LaboBank");
         frame.getContentPane().add(new LoginPanel(this, usuarioService));
         frame.getContentPane().validate();
         frame.getContentPane().repaint();

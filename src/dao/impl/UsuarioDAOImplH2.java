@@ -16,44 +16,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UsuarioDAOImplH2 implements UsuarioDAO {
+
     public void crearUsuario(Usuario unUsuario) throws DAOException {
         String nombre = unUsuario.getNombre();
         String apellido = unUsuario.getApellido();
         int dni = unUsuario.getDni();
-        String rol = "CLIENTE";
-        if (unUsuario instanceof Administrador) {
-            rol = "ADMIN";
-        }
+        String rol = (unUsuario instanceof Administrador) ? "ADMIN" : "CLIENTE";
 
         Connection c = DBManager.connect();
         try {
             Statement s = c.createStatement();
-            String sql = "INSERT INTO usuarios (nombre, apellido, dni, rol) VALUES ('" + nombre + "', '" + apellido + "', '" + dni + "', '" + rol + "' )";
+            String sql = "INSERT INTO usuarios (nombre, apellido, dni, rol) VALUES ('"
+                    + nombre + "', '" + apellido + "', '" + dni + "', '" + rol + "')";
             s.executeUpdate(sql);
             c.commit();
         } catch (SQLException e) {
-            if (e.getErrorCode() == 27001) {
-                throw new ObjetoDuplicadoException("No se puedo insertar el paciente");
+            try { c.rollback(); } catch (SQLException ex) { /* ignorar rollback fallido */ }
+            // H2: 23505 = unique constraint violation (DNI duplicado)
+            if (e.getErrorCode() == 23505 || e.getErrorCode() == 27001) {
+                throw new ObjetoDuplicadoException("Ya existe un usuario con ese DNI", e);
             }
-            if (e.getErrorCode() == 23505) {
-                throw new ObjetoDuplicadoException("El nombre ya esta en uso");
-            }
-            try {
-                e.printStackTrace();
-                c.rollback();
-            } catch (SQLException el) {
-                throw new DAOException("no se pudo insertar");
-            }
-        }
-        finally {
-            try {
-                c.close();
-            } catch (SQLException el) {
-                el.printStackTrace();
-            }
+            throw new DAOException("Error al crear el usuario", e);
+        } finally {
+            cerrarConexion(c);
         }
     }
-
 
     public void borrarUsuario(int dni) throws DAOException {
         String sql = "DELETE FROM usuarios WHERE dni = '" + dni + "'";
@@ -63,95 +50,66 @@ public class UsuarioDAOImplH2 implements UsuarioDAO {
             s.executeUpdate(sql);
             c.commit();
         } catch (SQLException e) {
-            try {
-                c.rollback();
-                e.printStackTrace();
-            } catch (SQLException el) {
-                el.printStackTrace();
-            }
+            try { c.rollback(); } catch (SQLException ex) { /* ignorar rollback fallido */ }
+            throw new DAOException("Error al eliminar el usuario con DNI: " + dni, e);
         } finally {
-            try {
-                c.close();
-            } catch (SQLException el) {
-                el.printStackTrace();
-            }
+            cerrarConexion(c);
         }
-
     }
 
-
-    public void actualizarUsuario(Usuario unUsuario) {
+    public void actualizarUsuario(Usuario unUsuario) throws DAOException {
         String nombre = unUsuario.getNombre();
         String apellido = unUsuario.getApellido();
         int dni = unUsuario.getDni();
 
-        String sql = "UPDATE usuarios set apellido = '" + apellido + "', dni = '" + dni + "' WHERE nombre = '" + nombre + "'";
+        String sql = "UPDATE usuarios SET apellido = '" + apellido
+                + "', dni = '" + dni + "' WHERE nombre = '" + nombre + "'";
         Connection c = DBManager.connect();
         try {
             Statement s = c.createStatement();
             s.executeUpdate(sql);
             c.commit();
         } catch (SQLException e) {
-            try {
-                c.rollback();
-                e.printStackTrace();
-            } catch (SQLException el) {
-                el.printStackTrace();
+            try { c.rollback(); } catch (SQLException ex) { /* ignorar rollback fallido */ }
+            if (e.getErrorCode() == 23505) {
+                throw new ObjetoDuplicadoException("Ya existe un usuario con ese DNI", e);
             }
+            throw new DAOException("Error al actualizar el usuario", e);
         } finally {
-            try {
-                c.close();
-            } catch (SQLException el) {
-                el.printStackTrace();
-            }
+            cerrarConexion(c);
         }
-
     }
 
     /*para crear, editar o borrar se usa el .executeUpdate()
      * y para mostrar/consultar algo a la base de datos, uso el .executeQuery()*/
-    public Usuario muestraUsuario(int dni) {
+    public Usuario muestraUsuario(int dni) throws DAOException {
         String sql = "SELECT * FROM usuarios WHERE dni = '" + dni + "'";
         Connection c = DBManager.connect();
         try {
             Statement s = c.createStatement();
-            ResultSet rs = s.executeQuery(sql); //me devuele un ResultSet, que contiene las tuplas del resultado
+            ResultSet rs = s.executeQuery(sql); //me devuelve un ResultSet, que contiene las tuplas del resultado
 
-
-            /*obtengo el resultado y las tuplas almacenadas en la var rs. luego tegno que recorrer el rs, porque es un conjunto de datos sueltos q vienen de la BD. arranca con un puntero en una posicion antes del resultado, y el next() va moviendo ese puntero y si no hya mas resultados, devuelve false. y esto lo puedo usar para un bucle  */
+            /*obtengo el resultado y las tuplas almacenadas en la var rs. luego tengo que recorrer el rs, porque es un conjunto de datos sueltos q vienen de la BD. arranca con un puntero en una posicion antes del resultado, y el next() va moviendo ese puntero y si no hay mas resultados, devuelve false. y esto lo puedo usar para un bucle */
             if (rs.next()) { // si hay resultados, entra en el if
                 int id = rs.getInt("id");
                 String nombre = rs.getString("nombre");
                 String apellido = rs.getString("apellido");
                 int dniUsuario = rs.getInt("dni");
                 String rol = rs.getString("rol");
-                if (rol.equals( "ADMIN")) {
-                    Administrador administrador = new Administrador(id, nombre, apellido, dniUsuario);
-                    return administrador;
+                if (rol.equals("ADMIN")) {
+                    return new Administrador(id, nombre, apellido, dniUsuario);
                 } else {
-                    Cliente cliente = new Cliente(id, nombre, apellido, dniUsuario);
-                    return cliente;
+                    return new Cliente(id, nombre, apellido, dniUsuario);
                 }
             }
-        } catch (SQLException e) { // aca tengo que poner mis propias exceptions
-            try {
-                c.rollback();
-                e.printStackTrace();
-            } catch (SQLException el) {
-                el.printStackTrace();
-            }
+            return null;
+        } catch (SQLException e) {
+            try { c.rollback(); } catch (SQLException ex) { /* ignorar rollback fallido */ }
+            throw new DAOException("Error al buscar el usuario con DNI: " + dni, e);
         } finally {
-            try {
-                c.close(); // siempre tengo qeu cerrar la conexion a la BD
-            } catch (SQLException el) {
-                el.printStackTrace();
-            }
-
+            cerrarConexion(c);
         }
-
-        return null;
     }
-
 
     public List<Usuario> listaTodosLosUsuarios() throws DAOException {
         List<Usuario> resultado = new ArrayList<>();
@@ -167,30 +125,28 @@ public class UsuarioDAOImplH2 implements UsuarioDAO {
                 String apellido = rs.getString("apellido");
                 int dni = rs.getInt("dni");
                 String rol = rs.getString("rol");
-                if (rol.equals( "ADMIN")) {
-                    Administrador administrador = new Administrador(id, nombre, apellido, dni);
-                    resultado.add(administrador);
+                if (rol.equals("ADMIN")) {
+                    resultado.add(new Administrador(id, nombre, apellido, dni));
                 } else {
-                    Cliente cliente = new Cliente(id, nombre, apellido, dni);
-                    resultado.add(cliente);
+                    resultado.add(new Cliente(id, nombre, apellido, dni));
                 }
-
             }
         } catch (SQLException e) {
-            try {
-                c.rollback();
-                e.printStackTrace();
-            } catch (SQLException el) {
-                throw new DAOException("error al listar usuarios");
-            }
+            try { c.rollback(); } catch (SQLException ex) { /* ignorar rollback fallido */ }
+            throw new DAOException("Error al listar los usuarios", e);
         } finally {
-            try {
-                c.close();
-            } catch (SQLException el) {
-                el.printStackTrace();
-            }
+            cerrarConexion(c);
         }
 
         return resultado;
+    }
+
+    // ── Utilidad privada ────────────────────────────────────────────────────
+    private void cerrarConexion(Connection c) {
+        try {
+            if (c != null) c.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

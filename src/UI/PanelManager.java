@@ -1,6 +1,7 @@
 package UI;
 
 import UI.formularioUsuario.UsuarioFormPanel;
+import UI.login.LoginPanel;
 import UI.tablaUsuarios.TablaUsuariosPanel;
 import entidades.Usuario;
 import service.UsuarioService;
@@ -40,6 +41,21 @@ public class PanelManager {
         frame.getContentPane().removeAll();
         UsuarioFormPanel formulario = new UsuarioFormPanel(this, usuarioService, usuario);
         frame.getContentPane().add(formulario);
+        frame.getContentPane().validate();
+        frame.getContentPane().repaint();
+    }
+
+    public void mostrarFormularioRegistro() {
+        frame.getContentPane().removeAll();
+        UsuarioFormPanel formulario = new UsuarioFormPanel(this, usuarioService, null, true);
+        frame.getContentPane().add(formulario);
+        frame.getContentPane().validate();
+        frame.getContentPane().repaint();
+    }
+
+    public void mostrarLoginPanel() {
+        frame.getContentPane().removeAll();
+        frame.getContentPane().add(new LoginPanel(this, usuarioService));
         frame.getContentPane().validate();
         frame.getContentPane().repaint();
     }

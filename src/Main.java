@@ -38,7 +38,7 @@ public class Main {
     public void iniciarManager() {
         manager = new PanelManager(usuarioService);
         manager.armarManager();
-        manager.mostrarTablaUsuariosPanel();
+        manager.mostrarLoginPanel();
     }
 
     public void showFrame() {

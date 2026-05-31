@@ -4,6 +4,7 @@ import UI.PanelManager;
 import entidades.Administrador;
 import entidades.Cliente;
 import entidades.Usuario;
+import exceptions.serviceExceptions.DniDuplicadoException;
 import exceptions.serviceExceptions.ServiceException;
 import service.UsuarioService;
 
@@ -18,6 +19,7 @@ public class UsuarioFormPanel extends JPanel implements ActionListener {
     private UsuarioService usuarioService;
 
     private Usuario usuarioAEditar;
+    private boolean modoRegistro;  // true cuando viene del login para registrarse
 
     private JTextField campoDni;
     private JTextField campoNombre;
@@ -28,10 +30,15 @@ public class UsuarioFormPanel extends JPanel implements ActionListener {
     private JButton botonCancelar;
 
     public UsuarioFormPanel(PanelManager panelManager, UsuarioService usuarioService, Usuario usuarioAEditar) {
+        this(panelManager, usuarioService, usuarioAEditar, false);
+    }
+
+    public UsuarioFormPanel(PanelManager panelManager, UsuarioService usuarioService, Usuario usuarioAEditar, boolean modoRegistro) {
         super();
         this.panelManager = panelManager;
         this.usuarioService = usuarioService;
         this.usuarioAEditar = usuarioAEditar;
+        this.modoRegistro = modoRegistro;
         armarPanel();
     }
 
@@ -81,11 +88,16 @@ public class UsuarioFormPanel extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == botonCancelar) {
-            panelManager.mostrarTablaUsuariosPanel();
+            if (modoRegistro) {
+                panelManager.mostrarLoginPanel();
+            } else {
+                panelManager.mostrarTablaUsuariosPanel();
+            }
             return;
         }
 
         if (e.getSource() == botonConfirmar) {
+            // ── Validaciones de formato (responsabilidad de la UI) ────────
             String dniTexto = campoDni.getText().trim();
             String nombre = campoNombre.getText().trim();
             String apellido = campoApellido.getText().trim();
@@ -103,19 +115,7 @@ public class UsuarioFormPanel extends JPanel implements ActionListener {
                 return;
             }
 
-
-            try {
-                Usuario existente = usuarioService.buscarUsuario(dni);
-                boolean esDuplicado = existente != null;
-
-                if (esDuplicado && (usuarioAEditar == null || existente.getId() != usuarioAEditar.getId())) {
-                    JOptionPane.showMessageDialog(this, "Ya existe un usuario con ese DNI.", "DNI duplicado", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-            } catch (ServiceException ex) {
-                // REVISAR
-            }
-
+            // ── Llamada al servicio (valida reglas de negocio internamente) ─
             try {
                 if (usuarioAEditar == null) {
                     String rolElegido = (String) comboRol.getSelectedItem();
@@ -126,13 +126,21 @@ public class UsuarioFormPanel extends JPanel implements ActionListener {
                         nuevoUsuario = new Cliente(0, nombre, apellido, dni);
                     }
                     usuarioService.agregarUsuario(nuevoUsuario);
+                    if (modoRegistro && nuevoUsuario instanceof Cliente) {
+                        JOptionPane.showMessageDialog(this, "Cuenta creada correctamente.", "Registro exitoso", JOptionPane.INFORMATION_MESSAGE);
+                        panelManager.mostrarLoginPanel();
+                    } else {
+                        panelManager.mostrarTablaUsuariosPanel();
+                    }
                 } else {
                     usuarioAEditar.setDni(dni);
                     usuarioAEditar.setNombre(nombre);
                     usuarioAEditar.setApellido(apellido);
                     usuarioService.actualizarUsuario(usuarioAEditar);
+                    panelManager.mostrarTablaUsuariosPanel();
                 }
-                panelManager.mostrarTablaUsuariosPanel();
+            } catch (DniDuplicadoException ex) {
+                JOptionPane.showMessageDialog(this, "Ya existe un usuario con ese DNI.", "DNI duplicado", JOptionPane.WARNING_MESSAGE);
             } catch (ServiceException ex) {
                 JOptionPane.showMessageDialog(this, "Error al guardar el usuario: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 ex.printStackTrace();

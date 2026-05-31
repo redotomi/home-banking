@@ -4,6 +4,7 @@ import dao.UsuarioDAO;
 import entidades.Usuario;
 import exceptions.DAOExceptions.DAOException;
 import exceptions.DAOExceptions.ObjetoDuplicadoException;
+import exceptions.serviceExceptions.DniDuplicadoException;
 import exceptions.serviceExceptions.ServiceException;
 
 import java.util.List;
@@ -17,9 +18,15 @@ public class UsuarioService {
 
     public void agregarUsuario(Usuario usuario) throws ServiceException {
         try {
+            Usuario existente = this.usuarioDAO.muestraUsuario(usuario.getDni());
+            if (existente != null) {
+                throw new DniDuplicadoException(usuario.getDni());
+            }
             this.usuarioDAO.crearUsuario(usuario);
+        } catch (DniDuplicadoException e) {
+            throw e;
         } catch (ObjetoDuplicadoException e) {
-            throw new ServiceException("GRAVE", e);
+            throw new DniDuplicadoException(usuario.getDni());
         } catch (DAOException e) {
             throw new ServiceException(e);
         }
@@ -44,10 +51,16 @@ public class UsuarioService {
 
     public void actualizarUsuario(Usuario usuario) throws ServiceException {
         try {
+            Usuario existente = this.usuarioDAO.muestraUsuario(usuario.getDni());
+            if (existente != null && existente.getId() != usuario.getId()) {
+                throw new DniDuplicadoException(usuario.getDni());
+            }
             this.usuarioDAO.actualizarUsuario(usuario);
             System.out.println("Usuario: " + usuario.getNombre() + " modificado correctamente!");
+        } catch (DniDuplicadoException e) {
+            throw e;
         } catch (DAOException e) {
-            throw new ServiceException();
+            throw new ServiceException(e);
         }
     }
 

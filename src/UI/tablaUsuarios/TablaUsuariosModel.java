@@ -1,5 +1,6 @@
 package UI.tablaUsuarios;
 
+import entidades.Administrador;
 import entidades.Usuario;
 
 import javax.swing.table.AbstractTableModel;
@@ -11,10 +12,11 @@ public class TablaUsuariosModel extends AbstractTableModel {
     private static final int COLUMNA_NOMBRE = 1;
     private static final int COLUMNA_APELLIDO = 2;
     static final int COLUMNA_DNI = 3;
+    static final int COLUMNA_ROL = 4;
 
 
-    private String[] nombresColumnas = {"ID", "Nombre", "Apellido", "DNI"};
-    private Class[] tiposColumnas = {Integer.class, String.class, String.class, Integer.class, String.class};
+    private String[] nombresColumnas = {"ID", "Nombre", "Apellido", "DNI", "Rol"};
+    private Class[] tiposColumnas = {Integer.class, String.class, String.class, Integer.class, String.class, String.class};
 
     private List<Usuario> filas;
 
@@ -75,6 +77,9 @@ public class TablaUsuariosModel extends AbstractTableModel {
             case COLUMNA_DNI:
                 result = usuario.getDni();
                 break;
+            case COLUMNA_ROL:
+                result = (usuario instanceof Administrador) ? "Administrador" : "Cliente";
+                break;
             default:
                 result = new String("");
         }
@@ -100,7 +105,7 @@ public class TablaUsuariosModel extends AbstractTableModel {
     }
 
     @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex){
-        return true;
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        return false;
     }
 }

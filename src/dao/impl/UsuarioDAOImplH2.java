@@ -1,6 +1,8 @@
 package dao.impl;
 
 import dao.UsuarioDAO;
+import entidades.Administrador;
+import entidades.Cliente;
 import entidades.Usuario;
 import exceptions.DAOExceptions.DAOException;
 import exceptions.DAOExceptions.ObjetoDuplicadoException;
@@ -18,11 +20,15 @@ public class UsuarioDAOImplH2 implements UsuarioDAO {
         String nombre = unUsuario.getNombre();
         String apellido = unUsuario.getApellido();
         int dni = unUsuario.getDni();
+        String rol = "CLIENTE";
+        if (unUsuario instanceof Administrador) {
+            rol = "ADMIN";
+        }
 
         Connection c = DBManager.connect();
         try {
             Statement s = c.createStatement();
-            String sql = "INSERT INTO usuarios (nombre, apellido, dni) VALUES ('" + nombre + "', '" + apellido + "', '" + dni + "' )";
+            String sql = "INSERT INTO usuarios (nombre, apellido, dni, rol) VALUES ('" + nombre + "', '" + apellido + "', '" + dni + "', '" + rol + "' )";
             s.executeUpdate(sql);
             c.commit();
         } catch (SQLException e) {
@@ -115,11 +121,17 @@ public class UsuarioDAOImplH2 implements UsuarioDAO {
             /*obtengo el resultado y las tuplas almacenadas en la var rs. luego tegno que recorrer el rs, porque es un conjunto de datos sueltos q vienen de la BD. arranca con un puntero en una posicion antes del resultado, y el next() va moviendo ese puntero y si no hya mas resultados, devuelve false. y esto lo puedo usar para un bucle  */
             if (rs.next()) { // si hay resultados, entra en el if
                 int id = rs.getInt("id");
-                String nombreUsuario = rs.getString("nombre");
+                String nombre = rs.getString("nombre");
                 String apellido = rs.getString("apellido");
                 int dniUsuario = rs.getInt("dni");
-                Usuario p = new Usuario(id, nombreUsuario, apellido, dniUsuario);
-                return p;
+                String rol = rs.getString("rol");
+                if (rol.equals( "ADMIN")) {
+                    Administrador administrador = new Administrador(id, nombre, apellido, dniUsuario);
+                    return administrador;
+                } else {
+                    Cliente cliente = new Cliente(id, nombre, apellido, dniUsuario);
+                    return cliente;
+                }
             }
         } catch (SQLException e) { // aca tengo que poner mis propias exceptions
             try {
@@ -151,11 +163,18 @@ public class UsuarioDAOImplH2 implements UsuarioDAO {
 
             while (rs.next()) { //mientras haya mas resultados, repite este codigo
                 int id = rs.getInt("id");
-                String user = rs.getString("nombre");
+                String nombre = rs.getString("nombre");
                 String apellido = rs.getString("apellido");
                 int dni = rs.getInt("dni");
-                Usuario p = new Usuario(id, user, apellido, dni);
-                resultado.add(p); // por cada usuario nuevo que encuentro, lo guardo en esta lista
+                String rol = rs.getString("rol");
+                if (rol.equals( "ADMIN")) {
+                    Administrador administrador = new Administrador(id, nombre, apellido, dni);
+                    resultado.add(administrador);
+                } else {
+                    Cliente cliente = new Cliente(id, nombre, apellido, dni);
+                    resultado.add(cliente);
+                }
+
             }
         } catch (SQLException e) {
             try {

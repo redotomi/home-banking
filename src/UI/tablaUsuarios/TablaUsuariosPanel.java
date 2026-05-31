@@ -13,9 +13,7 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class TablaUsuariosPanel extends JPanel implements ActionListener, Printable {
     private JTable tablaUsuarios;
@@ -25,8 +23,9 @@ public class TablaUsuariosPanel extends JPanel implements ActionListener, Printa
     private JScrollPane scrollPaneParaTabla;
     private JButton botonLlenar;
     private JButton botonAgregar;
-    private JButton botonImprimir;
+    private JButton botonEditar;
     private JButton botonEliminar;
+    private JButton botonImprimir;
 
     private UsuarioService usuarioService;
 
@@ -38,40 +37,36 @@ public class TablaUsuariosPanel extends JPanel implements ActionListener, Printa
     }
 
     private void armarPanel() {
-        this.setLayout(new FlowLayout());
+        this.setLayout(new BorderLayout());
 
         model = new TablaUsuariosModel();
         tablaUsuarios = new JTable(model);
         scrollPaneParaTabla = new JScrollPane(tablaUsuarios);
-        this.add(scrollPaneParaTabla);
+        this.add(scrollPaneParaTabla, BorderLayout.CENTER);
 
-        //ESCUCHO EVENTOS TABLA --- si le das enter cuando editas, entra aca
-        TableCellListener tcl = new TableCellListener(tablaUsuarios, new AbstractAction(){
-            public void actionPerformed(ActionEvent e){
-                TableCellListener tcl = (TableCellListener)e.getSource();
-                System.out.println("Row   : " + tcl.getRow());
-                System.out.println("Column: " + tcl.getColumn());
-                System.out.println("Old   : " + tcl.getOldValue());
-                System.out.println("New   : " + tcl.getNewValue());
-
-            }
-        });
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 8));
 
         botonLlenar = new JButton("Cargar Tabla");
         botonLlenar.addActionListener(this);
-        this.add(botonLlenar);
+        panelBotones.add(botonLlenar);
 
-        botonAgregar = new JButton("Cargar fila");
+        botonAgregar = new JButton("Agregar usuario");
         botonAgregar.addActionListener(this);
-        this.add(botonAgregar);
+        panelBotones.add(botonAgregar);
+
+        botonEditar = new JButton("Editar usuario");
+        botonEditar.addActionListener(this);
+        panelBotones.add(botonEditar);
 
         botonEliminar = new JButton("Eliminar fila");
         botonEliminar.addActionListener(this);
-        this.add(botonEliminar);
+        panelBotones.add(botonEliminar);
 
         botonImprimir = new JButton("Imprimir Tabla");
         botonImprimir.addActionListener(this);
-        this.add(botonImprimir);
+        panelBotones.add(botonImprimir);
+
+        this.add(panelBotones, BorderLayout.SOUTH);
 
     }
 
@@ -104,41 +99,25 @@ public class TablaUsuariosPanel extends JPanel implements ActionListener, Printa
             }
 
         } else if (e.getSource() == botonAgregar) {
-            Random r = new Random();
-            int x = r.nextInt(100);
-            int dni = r.nextInt(1000) * r.nextInt(1000);
+            panelManager.mostrarFormularioUsuario(null);
 
-            Usuario u1 = new Usuario(dni / x, "test" + x, "mail" + x, dni);
-
-            model.getFilas().add(u1);
-
-            model.fireTableDataChanged();
-
-            /*
-             * tablaUsuarios.revalidate();
-             *
-             * this.revalidate(); this.repaint();
-             */
+        } else if (e.getSource() == botonEditar) {
+            int filaSeleccionada = tablaUsuarios.getSelectedRow();
+            if (filaSeleccionada == -1) {
+                JOptionPane.showMessageDialog(this, "Seleccioná una fila para editar.", "Sin selección", JOptionPane.WARNING_MESSAGE);
+            } else {
+                Usuario usuario = model.getFilas().get(filaSeleccionada);
+                panelManager.mostrarFormularioUsuario(usuario);
+            }
 
         } else {
             try {
-                List<Usuario> listaUsuarios =  usuarioService.consultarUsuarios();
+                List<Usuario> listaUsuarios = usuarioService.consultarUsuarios();
                 model.setFilas(listaUsuarios);
-
                 model.fireTableDataChanged();
             } catch (ServiceException exception) {
                 exception.printStackTrace();
             }
-//            Usuario u1 = new Usuario(1, "pipo", "pipo@river.com", 123);
-//            Usuario u2 = new Usuario(2, "coco", "coco@boca.com", 456);
-//            Usuario u3 = new Usuario(3, "tolo", "tolo@rojo.com", 789);
-//            Usuario u4 = new Usuario(4, "boquita", "sensini@newells.com", 100);
-//            List<Usuario> lista = new ArrayList<Usuario>();
-//            lista.add(u1);
-//            lista.add(u2);
-//            lista.add(u3);
-//            lista.add(u4);
-
         }
     }
 

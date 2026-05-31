@@ -1,6 +1,8 @@
 package UI;
 
+import UI.formularioUsuario.UsuarioFormPanel;
 import UI.tablaUsuarios.TablaUsuariosPanel;
+import entidades.Usuario;
 import service.UsuarioService;
 
 import javax.swing.*;
@@ -17,7 +19,7 @@ public class PanelManager {
 
     public void armarManager() {
         frame = new JFrame();
-        frame.setBounds(100, 100, 500, 1000);
+        frame.setBounds(100, 100, 960, 540);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         tablaUsuariosPanel = new TablaUsuariosPanel(this, usuarioService);
@@ -30,6 +32,14 @@ public class PanelManager {
     public void mostrarTablaUsuariosPanel() {
         frame.getContentPane().removeAll();
         frame.getContentPane().add(tablaUsuariosPanel);
+        frame.getContentPane().validate();
+        frame.getContentPane().repaint();
+    }
+
+    public void mostrarFormularioUsuario(Usuario usuario) {
+        frame.getContentPane().removeAll();
+        UsuarioFormPanel formulario = new UsuarioFormPanel(this, usuarioService, usuario);
+        frame.getContentPane().add(formulario);
         frame.getContentPane().validate();
         frame.getContentPane().repaint();
     }

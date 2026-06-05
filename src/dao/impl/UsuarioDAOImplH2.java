@@ -4,8 +4,10 @@ import dao.UsuarioDAO;
 import entidades.Administrador;
 import entidades.Cliente;
 import entidades.Usuario;
+import exceptions.DAOExceptions.ConexionDAOException;
 import exceptions.DAOExceptions.DAOException;
 import exceptions.DAOExceptions.ObjetoDuplicadoException;
+import exceptions.DAOExceptions.ObjetoNoEncontradoException;
 import util.DBManager;
 
 import java.sql.Connection;
@@ -21,9 +23,12 @@ public class UsuarioDAOImplH2 implements UsuarioDAO {
         String nombre = unUsuario.getNombre();
         String apellido = unUsuario.getApellido();
         int dni = unUsuario.getDni();
-        String rol = (unUsuario instanceof Administrador) ? "ADMIN" : "CLIENTE";
+        String rol = "CLIENTE";
+        if (unUsuario instanceof Administrador) {
+            rol = "ADMIN";
+        }
 
-        Connection c = DBManager.connect();
+        Connection c = obtenerConexion();
         try {
             Statement s = c.createStatement();
             String sql = "INSERT INTO usuarios (nombre, apellido, dni, rol) VALUES ('"
@@ -31,7 +36,7 @@ public class UsuarioDAOImplH2 implements UsuarioDAO {
             s.executeUpdate(sql);
             c.commit();
         } catch (SQLException e) {
-            try { c.rollback(); } catch (SQLException ex) { /* ignorar rollback fallido */ }
+            try { c.rollback(); } catch (SQLException ex) { }
             // H2: 23505 = unique constraint violation (DNI duplicado)
             if (e.getErrorCode() == 23505 || e.getErrorCode() == 27001) {
                 throw new ObjetoDuplicadoException("Ya existe un usuario con ese DNI", e);
@@ -44,13 +49,18 @@ public class UsuarioDAOImplH2 implements UsuarioDAO {
 
     public void borrarUsuario(int dni) throws DAOException {
         String sql = "DELETE FROM usuarios WHERE dni = '" + dni + "'";
-        Connection c = DBManager.connect();
+        Connection c = obtenerConexion();
         try {
             Statement s = c.createStatement();
-            s.executeUpdate(sql);
+            int filasBorradas = s.executeUpdate(sql);
+            if (filasBorradas == 0) {
+                throw new ObjetoNoEncontradoException("No existe un usuario con DNI: " + dni);
+            }
             c.commit();
+        } catch (ObjetoNoEncontradoException e) {
+            throw e;
         } catch (SQLException e) {
-            try { c.rollback(); } catch (SQLException ex) { /* ignorar rollback fallido */ }
+            try { c.rollback(); } catch (SQLException ex) { }
             throw new DAOException("Error al eliminar el usuario con DNI: " + dni, e);
         } finally {
             cerrarConexion(c);
@@ -64,13 +74,18 @@ public class UsuarioDAOImplH2 implements UsuarioDAO {
 
         String sql = "UPDATE usuarios SET apellido = '" + apellido
                 + "', dni = '" + dni + "' WHERE nombre = '" + nombre + "'";
-        Connection c = DBManager.connect();
+        Connection c = obtenerConexion();
         try {
             Statement s = c.createStatement();
-            s.executeUpdate(sql);
+            int filasActualizadas = s.executeUpdate(sql);
+            if (filasActualizadas == 0) {
+                throw new ObjetoNoEncontradoException("No existe un usuario con nombre: " + nombre);
+            }
             c.commit();
+        } catch (ObjetoNoEncontradoException e) {
+            throw e;
         } catch (SQLException e) {
-            try { c.rollback(); } catch (SQLException ex) { /* ignorar rollback fallido */ }
+            try { c.rollback(); } catch (SQLException ex) { }
             if (e.getErrorCode() == 23505) {
                 throw new ObjetoDuplicadoException("Ya existe un usuario con ese DNI", e);
             }
@@ -84,7 +99,7 @@ public class UsuarioDAOImplH2 implements UsuarioDAO {
      * y para mostrar/consultar algo a la base de datos, uso el .executeQuery()*/
     public Usuario muestraUsuario(int dni) throws DAOException {
         String sql = "SELECT * FROM usuarios WHERE dni = '" + dni + "'";
-        Connection c = DBManager.connect();
+        Connection c = obtenerConexion();
         try {
             Statement s = c.createStatement();
             ResultSet rs = s.executeQuery(sql); //me devuelve un ResultSet, que contiene las tuplas del resultado
@@ -102,9 +117,11 @@ public class UsuarioDAOImplH2 implements UsuarioDAO {
                     return new Cliente(id, nombre, apellido, dniUsuario);
                 }
             }
-            return null;
+            throw new ObjetoNoEncontradoException("No existe un usuario con DNI: " + dni);
+        } catch (ObjetoNoEncontradoException e) {
+            throw e;
         } catch (SQLException e) {
-            try { c.rollback(); } catch (SQLException ex) { /* ignorar rollback fallido */ }
+            try { c.rollback(); } catch (SQLException ex) {}
             throw new DAOException("Error al buscar el usuario con DNI: " + dni, e);
         } finally {
             cerrarConexion(c);
@@ -114,7 +131,7 @@ public class UsuarioDAOImplH2 implements UsuarioDAO {
     public List<Usuario> listaTodosLosUsuarios() throws DAOException {
         List<Usuario> resultado = new ArrayList<>();
         String sql = "SELECT * FROM usuarios";
-        Connection c = DBManager.connect();
+        Connection c = obtenerConexion();
         try {
             Statement s = c.createStatement();
             ResultSet rs = s.executeQuery(sql);
@@ -132,7 +149,7 @@ public class UsuarioDAOImplH2 implements UsuarioDAO {
                 }
             }
         } catch (SQLException e) {
-            try { c.rollback(); } catch (SQLException ex) { /* ignorar rollback fallido */ }
+            try { c.rollback(); } catch (SQLException ex) {}
             throw new DAOException("Error al listar los usuarios", e);
         } finally {
             cerrarConexion(c);
@@ -141,7 +158,15 @@ public class UsuarioDAOImplH2 implements UsuarioDAO {
         return resultado;
     }
 
-    // ── Utilidad privada ────────────────────────────────────────────────────
+
+    private Connection obtenerConexion() throws ConexionDAOException {
+        Connection c = DBManager.connect();
+        if (c == null) {
+            throw new ConexionDAOException("No se pudo establecer conexión con la base de datos");
+        }
+        return c;
+    }
+
     private void cerrarConexion(Connection c) {
         try {
             if (c != null) c.close();

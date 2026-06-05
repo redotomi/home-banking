@@ -72,8 +72,9 @@ public class UsuarioDAOImplH2 implements UsuarioDAO {
         String apellido = unUsuario.getApellido();
         int dni = unUsuario.getDni();
 
-        String sql = "UPDATE usuarios SET apellido = '" + apellido
-                + "', dni = '" + dni + "' WHERE nombre = '" + nombre + "'";
+        String sql = "UPDATE usuarios SET nombre = '" + nombre
+                + "', apellido = '" + apellido
+                + "', dni = '" + dni + "' WHERE dni = " + unUsuario.getDni();
         Connection c = obtenerConexion();
         try {
             Statement s = c.createStatement();

@@ -4,6 +4,8 @@ import dao.CuentaDAO;
 import entidades.Cuenta;
 import entidades.Usuario;
 import exceptions.DAOExceptions.DAOException;
+import exceptions.DAOExceptions.ObjetoNoEncontradoException;
+import exceptions.serviceExceptions.CuentaNoEncontradaException;
 import exceptions.serviceExceptions.ServiceException;
 
 import java.util.List;
@@ -37,6 +39,24 @@ public class CuentaService {
             return cuentaDAO.listaTodasLasCuentas(dni);
         } catch (DAOException e) {
             throw new ServiceException("Error al obtener las cuentas del cliente con DNI: " + dni, e);
+        }
+    }
+
+    public Cuenta muestraCuenta(String cbu) throws ServiceException {
+        try {
+            return cuentaDAO.muestraCuenta(cbu);
+        } catch (ObjetoNoEncontradoException e) {
+            throw new CuentaNoEncontradaException(cbu);
+        } catch (DAOException e) {
+            throw new ServiceException("Error al obtener la cuenta con CBU: " + cbu, e);
+        }
+    }
+
+    public void actualizarSaldo(String cbu, int nuevoSaldo) throws ServiceException {
+        try {
+            cuentaDAO.actualizarSaldo(cbu, nuevoSaldo);
+        } catch (DAOException e) {
+            throw new ServiceException("Error al actualizar el saldo de la cuenta con CBU: " + cbu, e);
         }
     }
 

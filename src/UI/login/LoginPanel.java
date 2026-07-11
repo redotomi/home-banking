@@ -2,6 +2,7 @@ package UI.login;
 
 import UI.PanelManager;
 import entidades.Administrador;
+import entidades.Cliente;
 import entidades.Usuario;
 import exceptions.UIExceptions.EntradaInvalidaException;
 import exceptions.serviceExceptions.ServiceException;
@@ -118,11 +119,8 @@ public class LoginPanel extends JPanel implements ActionListener {
 
             if (usuario instanceof Administrador) {
                 panelManager.mostrarTablaUsuariosPanel();
-            } else {
-                JOptionPane.showMessageDialog(this,
-                        "Bienvenido, " + usuario.getNombre() + " " + usuario.getApellido() + ".\n" +
-                        "El acceso al sistema de clientes estará disponible pronto.",
-                        "Inicio de sesión exitoso", JOptionPane.INFORMATION_MESSAGE);
+            } else if (usuario instanceof Cliente) {
+                panelManager.mostrarPantallaCliente((Cliente) usuario);
             }
 
         } catch (EntradaInvalidaException ex) {

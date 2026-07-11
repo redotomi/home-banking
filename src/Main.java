@@ -26,7 +26,7 @@ public class Main {
     }
 
     public void iniciarManager() {
-        manager = new PanelManager(usuarioService);
+        manager = new PanelManager(usuarioService, cuentaService);
         manager.armarManager();
         manager.mostrarLoginPanel();
     }

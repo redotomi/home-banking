@@ -6,6 +6,7 @@ import entidades.Usuario;
 import exceptions.DAOExceptions.DAOException;
 import exceptions.serviceExceptions.ServiceException;
 
+import java.util.List;
 import java.util.Random;
 
 public class CuentaService {
@@ -28,6 +29,14 @@ public class CuentaService {
             cuentaDAO.crearCuenta(cuenta, usuario.getDni());
         } catch (DAOException e) {
             throw new ServiceException("Error al crear la cuenta para el usuario con DNI: " + usuario.getDni(), e);
+        }
+    }
+
+    public List<Cuenta> listarCuentasDeCliente(int dni) throws ServiceException {
+        try {
+            return cuentaDAO.listaTodasLasCuentas(dni);
+        } catch (DAOException e) {
+            throw new ServiceException("Error al obtener las cuentas del cliente con DNI: " + dni, e);
         }
     }
 

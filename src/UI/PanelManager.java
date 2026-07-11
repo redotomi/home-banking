@@ -1,9 +1,12 @@
 package UI;
 
+import UI.cliente.ClientePanel;
 import UI.formularioUsuario.UsuarioFormPanel;
 import UI.login.LoginPanel;
 import UI.tablaUsuarios.TablaUsuariosPanel;
+import entidades.Cliente;
 import entidades.Usuario;
+import service.CuentaService;
 import service.UsuarioService;
 
 import javax.swing.*;
@@ -11,11 +14,13 @@ import javax.swing.*;
 public class PanelManager {
     private JFrame frame;
     private UsuarioService usuarioService;
+    private CuentaService cuentaService;
 
     private TablaUsuariosPanel tablaUsuariosPanel;
 
-    public PanelManager(UsuarioService usuarioService) {
+    public PanelManager(UsuarioService usuarioService, CuentaService cuentaService) {
         this.usuarioService = usuarioService;
+        this.cuentaService = cuentaService;
     }
 
     public void armarManager() {
@@ -58,6 +63,14 @@ public class PanelManager {
         frame.getContentPane().removeAll();
         frame.setTitle("LaboBank");
         frame.getContentPane().add(new LoginPanel(this, usuarioService));
+        frame.getContentPane().validate();
+        frame.getContentPane().repaint();
+    }
+
+    public void mostrarPantallaCliente(Cliente cliente) {
+        frame.getContentPane().removeAll();
+        frame.setTitle("LaboBank - Mi cuenta");
+        frame.getContentPane().add(new ClientePanel(this, cliente, cuentaService));
         frame.getContentPane().validate();
         frame.getContentPane().repaint();
     }

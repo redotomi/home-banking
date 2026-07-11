@@ -16,4 +16,8 @@ public class Cliente extends Usuario {
         super(id, nombre, apellido, dni);
         this.cuentas = new ArrayList<Cuenta>();
     }
+
+    public List<Cuenta> getCuentas() {
+        return cuentas;
+    }
 }

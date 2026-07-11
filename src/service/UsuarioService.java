@@ -14,9 +14,11 @@ import java.util.List;
 
 public class UsuarioService {
     private UsuarioDAO usuarioDAO;
+    private CuentaService cuentaService;
 
-    public UsuarioService(UsuarioDAO usuarioDAO) {
+    public UsuarioService(UsuarioDAO usuarioDAO, CuentaService cuentaService) {
         this.usuarioDAO = usuarioDAO;
+        this.cuentaService = cuentaService;
     }
 
     public void agregarUsuario(Usuario usuario) throws ServiceException {
@@ -26,6 +28,7 @@ public class UsuarioService {
         } catch (ObjetoNoEncontradoException e) {
             try {
                 this.usuarioDAO.crearUsuario(usuario);
+                this.cuentaService.crearCuentaParaUsuario(usuario);
             } catch (ObjetoDuplicadoException ex) {
                 throw new DniDuplicadoException(usuario.getDni());
             } catch (DAOException ex) {

@@ -132,6 +132,24 @@ public class CuentaDAOImplH2 implements CuentaDAO {
 		}		
 	}
 
+	public Cuenta muestraCuentaPorAlias(String alias) throws DAOException {
+		String sql = "SELECT * FROM cuentas WHERE alias = '" + alias + "'";
+		Connection c = obtenerConexion();
+		try {
+			Statement s = c.createStatement();
+			ResultSet rs = s.executeQuery(sql);
+			if (rs.next()) {
+				return new Cuenta(rs.getString("nombre"), rs.getString("cbu"), rs.getString("alias"), rs.getString("moneda"), rs.getInt("monto"));
+			} else {
+				throw new ObjetoNoEncontradoException("No existe una cuenta con alias: " + alias);
+			}
+		} catch (SQLException e) {
+			throw new DAOException("Error al mostrar la cuenta con alias: " + alias, e);
+		} finally {
+			cerrarConexion(c);
+		}
+	}
+
 	public List<Cuenta> listaTodasLasCuentas(int dni) throws DAOException {
 		String sql = "SELECT * FROM cuentas WHERE dniusuario = '" + dni + "'";
 		Connection c = obtenerConexion();

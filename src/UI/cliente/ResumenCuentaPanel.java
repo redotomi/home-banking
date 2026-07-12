@@ -1,6 +1,10 @@
 package UI.cliente;
 
+import UI.PanelManager;
+import entidades.Cliente;
 import entidades.Cuenta;
+import service.CuentaService;
+import service.TransferenciaService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,9 +12,18 @@ import java.awt.*;
 public class ResumenCuentaPanel extends JPanel {
 
     private final Cuenta cuenta;
+    private final PanelManager panelManager;
+    private final Cliente cliente;
+    private final CuentaService cuentaService;
+    private final TransferenciaService transferenciaService;
 
-    public ResumenCuentaPanel(Cuenta cuenta) {
+    public ResumenCuentaPanel(Cuenta cuenta, PanelManager panelManager, Cliente cliente,
+                              CuentaService cuentaService, TransferenciaService transferenciaService) {
         this.cuenta = cuenta;
+        this.panelManager = panelManager;
+        this.cliente = cliente;
+        this.cuentaService = cuentaService;
+        this.transferenciaService = transferenciaService;
         armarPanel();
     }
 
@@ -36,6 +49,13 @@ public class ResumenCuentaPanel extends JPanel {
         campos.add(crearLabelValor(cuenta.getMonto() + " " + cuenta.getMoneda()));
 
         this.add(campos, BorderLayout.CENTER);
+
+        JPanel acciones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 4));
+        JButton botonTransferir = new JButton("Transferir");
+        botonTransferir.addActionListener(e -> panelManager.mostrarFormularioTransferencia(cuenta, cliente));
+        acciones.add(botonTransferir);
+
+        this.add(acciones, BorderLayout.SOUTH);
     }
 
     private JLabel crearLabelValor(String texto) {

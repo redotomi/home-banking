@@ -16,5 +16,7 @@ public interface CuentaDAO {
 
     Cuenta muestraCuenta(String cbu) throws DAOException;
 
+    Cuenta muestraCuentaPorAlias(String alias) throws DAOException;
+
     List<Cuenta> listaTodasLasCuentas(int dni) throws DAOException;
 }

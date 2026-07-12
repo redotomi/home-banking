@@ -5,6 +5,7 @@ import entidades.Cliente;
 import entidades.Cuenta;
 import exceptions.serviceExceptions.ServiceException;
 import service.CuentaService;
+import service.TransferenciaService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,26 +16,24 @@ public class ClientePanel extends JPanel {
     private final PanelManager panelManager;
     private final Cliente cliente;
     private final CuentaService cuentaService;
+    private final TransferenciaService transferenciaService;
 
-    public ClientePanel(PanelManager panelManager, Cliente cliente, CuentaService cuentaService) {
+    public ClientePanel(PanelManager panelManager, Cliente cliente,
+                        CuentaService cuentaService, TransferenciaService transferenciaService) {
         super(new BorderLayout(0, 0));
         this.panelManager = panelManager;
         this.cliente = cliente;
         this.cuentaService = cuentaService;
+        this.transferenciaService = transferenciaService;
         armarPanel();
     }
 
     private void armarPanel() {
         this.setBorder(BorderFactory.createEmptyBorder(16, 20, 16, 20));
 
-        JPanel encabezado = buildEncabezado();
-        this.add(encabezado, BorderLayout.NORTH);
-
-        JPanel cuerpo = buildCuerpo();
-        this.add(cuerpo, BorderLayout.CENTER);
-
-        JPanel pie = buildPie();
-        this.add(pie, BorderLayout.SOUTH);
+        this.add(buildEncabezado(), BorderLayout.NORTH);
+        this.add(buildCuerpo(), BorderLayout.CENTER);
+        this.add(buildPie(), BorderLayout.SOUTH);
     }
 
     private JPanel buildEncabezado() {
@@ -60,9 +59,9 @@ public class ClientePanel extends JPanel {
         panel.add(titulo, BorderLayout.NORTH);
 
         List<Cuenta> cuentas = cargarCuentas();
-        ListaCuentasPanel listaCuentasPanel = new ListaCuentasPanel(cuentas);
+        ListaCuentasPanel lista = new ListaCuentasPanel(cuentas, panelManager, cliente, cuentaService, transferenciaService);
 
-        JScrollPane scroll = new JScrollPane(listaCuentasPanel);
+        JScrollPane scroll = new JScrollPane(lista);
         scroll.setBorder(BorderFactory.createEmptyBorder());
         scroll.getVerticalScrollBar().setUnitIncrement(16);
         panel.add(scroll, BorderLayout.CENTER);

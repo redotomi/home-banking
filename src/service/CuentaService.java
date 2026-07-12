@@ -52,6 +52,22 @@ public class CuentaService {
         }
     }
 
+    public Cuenta buscarCuentaPorAliasOCbu(String valor) throws ServiceException {
+        try {
+            return cuentaDAO.muestraCuenta(valor);
+        } catch (ObjetoNoEncontradoException e) {
+            try {
+                return cuentaDAO.muestraCuentaPorAlias(valor);
+            } catch (ObjetoNoEncontradoException ex) {
+                throw new CuentaNoEncontradaException(valor);
+            } catch (DAOException ex) {
+                throw new ServiceException("Error al buscar la cuenta por alias: " + valor, ex);
+            }
+        } catch (DAOException e) {
+            throw new ServiceException("Error al buscar la cuenta: " + valor, e);
+        }
+    }
+
     public void actualizarSaldo(String cbu, int nuevoSaldo) throws ServiceException {
         try {
             cuentaDAO.actualizarSaldo(cbu, nuevoSaldo);

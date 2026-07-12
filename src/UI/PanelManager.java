@@ -1,12 +1,15 @@
 package UI;
 
 import UI.cliente.ClientePanel;
+import UI.cliente.TransferenciaFormPanel;
 import UI.formularioUsuario.UsuarioFormPanel;
 import UI.login.LoginPanel;
 import UI.tablaUsuarios.TablaUsuariosPanel;
 import entidades.Cliente;
+import entidades.Cuenta;
 import entidades.Usuario;
 import service.CuentaService;
+import service.TransferenciaService;
 import service.UsuarioService;
 
 import javax.swing.*;
@@ -15,12 +18,14 @@ public class PanelManager {
     private JFrame frame;
     private UsuarioService usuarioService;
     private CuentaService cuentaService;
+    private TransferenciaService transferenciaService;
 
     private TablaUsuariosPanel tablaUsuariosPanel;
 
-    public PanelManager(UsuarioService usuarioService, CuentaService cuentaService) {
+    public PanelManager(UsuarioService usuarioService, CuentaService cuentaService, TransferenciaService transferenciaService) {
         this.usuarioService = usuarioService;
         this.cuentaService = cuentaService;
+        this.transferenciaService = transferenciaService;
     }
 
     public void armarManager() {
@@ -70,7 +75,15 @@ public class PanelManager {
     public void mostrarPantallaCliente(Cliente cliente) {
         frame.getContentPane().removeAll();
         frame.setTitle("LaboBank - Mi cuenta");
-        frame.getContentPane().add(new ClientePanel(this, cliente, cuentaService));
+        frame.getContentPane().add(new ClientePanel(this, cliente, cuentaService, transferenciaService));
+        frame.getContentPane().validate();
+        frame.getContentPane().repaint();
+    }
+
+    public void mostrarFormularioTransferencia(Cuenta cuentaOrigen, Cliente cliente) {
+        frame.getContentPane().removeAll();
+        frame.setTitle("LaboBank - Nueva transferencia");
+        frame.getContentPane().add(new TransferenciaFormPanel(cuentaOrigen, cliente, cuentaService, transferenciaService, this));
         frame.getContentPane().validate();
         frame.getContentPane().repaint();
     }

@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Random;
 
 public class CuentaService {
-    private static final String NOMBRE_CUENTA_DEFAULT = "Caja Ahorro Pesos";
-    private static final String MONEDA_DEFAULT = "ARS";
     private static final int LONGITUD_CBU = 22;
 
     private CuentaDAO cuentaDAO;
@@ -23,10 +21,11 @@ public class CuentaService {
     }
 
 
-    public void crearCuentaParaUsuario(Usuario usuario) throws ServiceException {
-        String cbu = generarCBU();
+    public void crearCuenta(Usuario usuario, String tipoCuenta) throws ServiceException {
+        String moneda = tipoCuenta.contains("Dólares") ? "USD" : "ARS";
+        String cbu   = generarCBU();
         String alias = construirAlias(usuario.getNombre(), usuario.getApellido(), cbu);
-        Cuenta cuenta = new Cuenta(NOMBRE_CUENTA_DEFAULT, cbu, alias, MONEDA_DEFAULT, 0);
+        Cuenta cuenta = new Cuenta(tipoCuenta, cbu, alias, moneda, 0);
         try {
             cuentaDAO.crearCuenta(cuenta, usuario.getDni());
         } catch (DAOException e) {

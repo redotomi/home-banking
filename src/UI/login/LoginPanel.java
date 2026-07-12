@@ -68,7 +68,7 @@ public class LoginPanel extends JPanel implements ActionListener {
         JPanel panel = new JPanel(new BorderLayout(0, 10));
 
         JPanel form = new JPanel(new GridLayout(1, 2, 8, 0));
-        form.add(new JLabel("DNI (Admin - 11223344):"));
+        form.add(new JLabel("DNI (Admin - 11223344) (Cliente - 56756765):"));
         campoLoginDni = new JTextField();
         form.add(campoLoginDni);
         panel.add(form, BorderLayout.CENTER);

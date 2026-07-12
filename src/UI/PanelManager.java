@@ -50,7 +50,7 @@ public class PanelManager {
 
     public void mostrarFormularioUsuario(Usuario usuario) {
         frame.getContentPane().removeAll();
-        UsuarioFormPanel formulario = new UsuarioFormPanel(this, usuarioService, usuario);
+        UsuarioFormPanel formulario = new UsuarioFormPanel(this, usuarioService, cuentaService, usuario);
         frame.getContentPane().add(formulario);
         frame.getContentPane().validate();
         frame.getContentPane().repaint();

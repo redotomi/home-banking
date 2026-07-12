@@ -28,7 +28,7 @@ public class UsuarioService {
         } catch (ObjetoNoEncontradoException e) {
             try {
                 this.usuarioDAO.crearUsuario(usuario);
-                this.cuentaService.crearCuentaParaUsuario(usuario);
+                this.cuentaService.crearCuenta(usuario, "Caja Ahorro Pesos");
             } catch (ObjetoDuplicadoException ex) {
                 throw new DniDuplicadoException(usuario.getDni());
             } catch (DAOException ex) {

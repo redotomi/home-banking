@@ -7,6 +7,7 @@ import entidades.Usuario;
 import exceptions.UIExceptions.EntradaInvalidaException;
 import exceptions.serviceExceptions.DniDuplicadoException;
 import exceptions.serviceExceptions.ServiceException;
+import service.CuentaService;
 import service.UsuarioService;
 
 import javax.swing.*;
@@ -14,16 +15,26 @@ import javax.swing.*;
 public class UsuarioFormPanel extends AbstractPantallaAltaPanel {
 
     private final UsuarioService usuarioService;
+    private final CuentaService cuentaService;
     private final Usuario usuarioAEditar;
     private final boolean modoRegistro;
 
     public UsuarioFormPanel(PanelManager panelManager, UsuarioService usuarioService, Usuario usuarioAEditar) {
-        this(panelManager, usuarioService, usuarioAEditar, false);
+        this(panelManager, usuarioService, null, usuarioAEditar, false);
     }
 
     public UsuarioFormPanel(PanelManager panelManager, UsuarioService usuarioService, Usuario usuarioAEditar, boolean modoRegistro) {
+        this(panelManager, usuarioService, null, usuarioAEditar, modoRegistro);
+    }
+
+    public UsuarioFormPanel(PanelManager panelManager, UsuarioService usuarioService, CuentaService cuentaService, Usuario usuarioAEditar) {
+        this(panelManager, usuarioService, cuentaService, usuarioAEditar, false);
+    }
+
+    public UsuarioFormPanel(PanelManager panelManager, UsuarioService usuarioService, CuentaService cuentaService, Usuario usuarioAEditar, boolean modoRegistro) {
         super(panelManager);
         this.usuarioService = usuarioService;
+        this.cuentaService  = cuentaService;
         this.usuarioAEditar = usuarioAEditar;
         this.modoRegistro   = modoRegistro;
         armarPanel();
@@ -31,7 +42,12 @@ public class UsuarioFormPanel extends AbstractPantallaAltaPanel {
 
     @Override
     protected void inicializarCampos() {
-        this.camposPanel = new CamposUsuarioPanel(usuarioAEditar);
+        boolean editandoCliente = (usuarioAEditar instanceof Cliente) && (cuentaService != null);
+        if (editandoCliente) {
+            this.camposPanel = new EditarClienteCompositePanel(usuarioAEditar, cuentaService);
+        } else {
+            this.camposPanel = new CamposUsuarioPanel(usuarioAEditar);
+        }
     }
 
     @Override
@@ -41,7 +57,13 @@ public class UsuarioFormPanel extends AbstractPantallaAltaPanel {
 
     @Override
     protected void ejecutarAccionOk() {
-        CamposUsuarioPanel campos = (CamposUsuarioPanel) this.camposPanel;
+        CamposUsuarioPanel campos;
+        if (this.camposPanel instanceof EditarClienteCompositePanel) {
+            campos = ((EditarClienteCompositePanel) this.camposPanel).getCamposUsuarioPanel();
+        } else {
+            campos = (CamposUsuarioPanel) this.camposPanel;
+        }
+
         try {
             int    dni      = parsearCampos(campos);
             String nombre   = campos.getCampoNombre().getText().trim();

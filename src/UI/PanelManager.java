@@ -9,6 +9,7 @@ import entidades.Cliente;
 import entidades.Cuenta;
 import entidades.Usuario;
 import service.CuentaService;
+import service.TarjetaService;
 import service.TransferenciaService;
 import service.UsuarioService;
 
@@ -18,19 +19,22 @@ public class PanelManager {
     private JFrame frame;
     private UsuarioService usuarioService;
     private CuentaService cuentaService;
+    private TarjetaService tarjetaService;
     private TransferenciaService transferenciaService;
 
     private TablaUsuariosPanel tablaUsuariosPanel;
 
-    public PanelManager(UsuarioService usuarioService, CuentaService cuentaService, TransferenciaService transferenciaService) {
-        this.usuarioService = usuarioService;
-        this.cuentaService = cuentaService;
+    public PanelManager(UsuarioService usuarioService, CuentaService cuentaService,
+                        TarjetaService tarjetaService, TransferenciaService transferenciaService) {
+        this.usuarioService       = usuarioService;
+        this.cuentaService        = cuentaService;
+        this.tarjetaService       = tarjetaService;
         this.transferenciaService = transferenciaService;
     }
 
     public void armarManager() {
         frame = new JFrame();
-        frame.setBounds(100, 100, 960, 540);
+        frame.setBounds(100, 100, 1280, 720);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         tablaUsuariosPanel = new TablaUsuariosPanel(this, usuarioService);
@@ -50,7 +54,7 @@ public class PanelManager {
 
     public void mostrarFormularioUsuario(Usuario usuario) {
         frame.getContentPane().removeAll();
-        UsuarioFormPanel formulario = new UsuarioFormPanel(this, usuarioService, cuentaService, usuario);
+        UsuarioFormPanel formulario = new UsuarioFormPanel(this, usuarioService, cuentaService, tarjetaService, usuario);
         frame.getContentPane().add(formulario);
         frame.getContentPane().validate();
         frame.getContentPane().repaint();

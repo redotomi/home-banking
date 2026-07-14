@@ -8,6 +8,7 @@ import exceptions.UIExceptions.EntradaInvalidaException;
 import exceptions.serviceExceptions.DniDuplicadoException;
 import exceptions.serviceExceptions.ServiceException;
 import service.CuentaService;
+import service.MovimientoTarjetaService;
 import service.TarjetaService;
 import service.UsuarioService;
 
@@ -15,34 +16,38 @@ import javax.swing.*;
 
 public class UsuarioFormPanel extends AbstractPantallaAltaPanel {
 
-    private final UsuarioService usuarioService;
-    private final CuentaService cuentaService;
-    private final TarjetaService tarjetaService;
+    private final UsuarioService          usuarioService;
+    private final CuentaService           cuentaService;
+    private final TarjetaService          tarjetaService;
+    private final MovimientoTarjetaService movimientoTarjetaService;
     private final Usuario usuarioAEditar;
     private final boolean modoRegistro;
 
     public UsuarioFormPanel(PanelManager panelManager, UsuarioService usuarioService, Usuario usuarioAEditar) {
-        this(panelManager, usuarioService, null, null, usuarioAEditar, false);
+        this(panelManager, usuarioService, null, null, null, usuarioAEditar, false);
     }
 
     public UsuarioFormPanel(PanelManager panelManager, UsuarioService usuarioService, Usuario usuarioAEditar, boolean modoRegistro) {
-        this(panelManager, usuarioService, null, null, usuarioAEditar, modoRegistro);
-    }
-
-    public UsuarioFormPanel(PanelManager panelManager, UsuarioService usuarioService,
-                            CuentaService cuentaService, TarjetaService tarjetaService, Usuario usuarioAEditar) {
-        this(panelManager, usuarioService, cuentaService, tarjetaService, usuarioAEditar, false);
+        this(panelManager, usuarioService, null, null, null, usuarioAEditar, modoRegistro);
     }
 
     public UsuarioFormPanel(PanelManager panelManager, UsuarioService usuarioService,
                             CuentaService cuentaService, TarjetaService tarjetaService,
+                            MovimientoTarjetaService movimientoTarjetaService, Usuario usuarioAEditar) {
+        this(panelManager, usuarioService, cuentaService, tarjetaService, movimientoTarjetaService, usuarioAEditar, false);
+    }
+
+    public UsuarioFormPanel(PanelManager panelManager, UsuarioService usuarioService,
+                            CuentaService cuentaService, TarjetaService tarjetaService,
+                            MovimientoTarjetaService movimientoTarjetaService,
                             Usuario usuarioAEditar, boolean modoRegistro) {
         super(panelManager);
-        this.usuarioService  = usuarioService;
-        this.cuentaService   = cuentaService;
-        this.tarjetaService  = tarjetaService;
-        this.usuarioAEditar  = usuarioAEditar;
-        this.modoRegistro    = modoRegistro;
+        this.usuarioService           = usuarioService;
+        this.cuentaService            = cuentaService;
+        this.tarjetaService           = tarjetaService;
+        this.movimientoTarjetaService  = movimientoTarjetaService;
+        this.usuarioAEditar           = usuarioAEditar;
+        this.modoRegistro             = modoRegistro;
         armarPanel();
     }
 
@@ -50,7 +55,8 @@ public class UsuarioFormPanel extends AbstractPantallaAltaPanel {
     protected void inicializarCampos() {
         boolean editandoCliente = (usuarioAEditar instanceof Cliente) && (cuentaService != null);
         if (editandoCliente) {
-            this.camposPanel = new EditarClienteCompositePanel(usuarioAEditar, cuentaService, tarjetaService);
+            this.camposPanel = new EditarClienteCompositePanel(
+                    usuarioAEditar, cuentaService, tarjetaService, movimientoTarjetaService);
         } else {
             this.camposPanel = new CamposUsuarioPanel(usuarioAEditar);
         }

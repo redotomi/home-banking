@@ -56,4 +56,8 @@ public abstract class AbstractTablaClientePanel extends CamposPanel {
     protected abstract List<Object[]> obtenerFilas() throws ServiceException;
 
     protected abstract void agregarEntidad(String seleccion);
+
+    public JTable getTabla() {
+        return tablaPanel.getTabla();
+    }
 }

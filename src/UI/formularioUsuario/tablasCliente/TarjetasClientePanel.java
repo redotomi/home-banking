@@ -40,6 +40,16 @@ public class TarjetasClientePanel extends AbstractTablaClientePanel {
         return filas;
     }
 
+    /**
+     * Devuelve el número de la tarjeta actualmente seleccionada en la tabla,
+     * o {@code null} si no hay ninguna selección.
+     */
+    public String getNumeroTarjetaSeleccionada() {
+        int fila = getTabla().getSelectedRow();
+        if (fila < 0) return null;
+        return (String) getTabla().getValueAt(fila, 0);
+    }
+
     @Override
     protected void agregarEntidad(String proveedor) {
         try {

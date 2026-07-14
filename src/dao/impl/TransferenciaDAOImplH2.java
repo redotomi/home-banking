@@ -17,11 +17,11 @@ import java.util.List;
 public class TransferenciaDAOImplH2 implements TransferenciaDAO {
 
     public void crearTransferencia(Transferencia unaTransferencia) throws DAOException {
-        String cbuOrigen  = unaTransferencia.getCbuCuentaOrigen();
+        String cbuOrigen = unaTransferencia.getCbuCuentaOrigen();
         String cbuDestino = unaTransferencia.getCbuCuentaDestino();
-        String moneda     = unaTransferencia.getMoneda();
-        int monto         = unaTransferencia.getMonto();
-        String fecha      = unaTransferencia.getFecha().toString();
+        String moneda = unaTransferencia.getMoneda();
+        int monto = unaTransferencia.getMonto();
+        String fecha = unaTransferencia.getFecha().toString();
 
         Connection c = obtenerConexion();
         try {

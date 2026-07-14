@@ -33,6 +33,24 @@ public class TarjetaService {
         }
     }
 
+    public Tarjeta buscarTarjeta(String numero) throws ServiceException {
+        try {
+            return tarjetaDAO.buscarTarjeta(numero);
+        } catch (DAOException e) {
+            throw new ServiceException("Error al obtener la tarjeta con número: " + numero, e);
+        }
+    }
+
+    public void actualizarConsumo(String numero, int nuevoConsumo) throws ServiceException {
+        try {
+            Tarjeta tarjeta = tarjetaDAO.buscarTarjeta(numero);
+            tarjeta.setConsumo(nuevoConsumo);
+            tarjetaDAO.actualizarTarjeta(tarjeta);
+        } catch (DAOException e) {
+            throw new ServiceException("Error al actualizar el consumo de la tarjeta: " + numero, e);
+        }
+    }
+
     public List<Tarjeta> listarTarjetasDeCliente(String dniUsuario) throws ServiceException {
         try {
             return tarjetaDAO.listarTarjetasPorUsuario(dniUsuario);

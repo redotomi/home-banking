@@ -153,14 +153,14 @@ public class TarjetaDAOImplH2 implements TarjetaDAO {
     }
 
     private Tarjeta mapearTarjeta(ResultSet rs) throws SQLException {
-        String numero         = rs.getString("numero");
-        int limite            = rs.getInt("limite");
-        int consumo           = rs.getInt("consumo");
-        String proveedor      = rs.getString("proveedor");
+        String numero = rs.getString("numero");
+        int limite = rs.getInt("limite");
+        int consumo = rs.getInt("consumo");
+        String proveedor = rs.getString("proveedor");
         LocalDate vencimiento = rs.getDate("vencimiento").toLocalDate();
-        String cvv            = rs.getString("cvv");
-        String nombreTitular  = rs.getString("nombreTitular");
-        String dniUsuario     = rs.getString("dniUsuario");
+        String cvv = rs.getString("cvv");
+        String nombreTitular = rs.getString("nombreTitular");
+        String dniUsuario = rs.getString("dniUsuario");
         return new Tarjeta(numero, limite, consumo, proveedor, vencimiento, cvv, nombreTitular, dniUsuario);
     }
 

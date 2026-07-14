@@ -9,6 +9,7 @@ import entidades.Cliente;
 import entidades.Cuenta;
 import entidades.Usuario;
 import service.CuentaService;
+import service.MovimientoTarjetaService;
 import service.TarjetaService;
 import service.TransferenciaService;
 import service.UsuarioService;
@@ -21,15 +22,18 @@ public class PanelManager {
     private CuentaService cuentaService;
     private TarjetaService tarjetaService;
     private TransferenciaService transferenciaService;
+    private MovimientoTarjetaService movimientoTarjetaService;
 
     private TablaUsuariosPanel tablaUsuariosPanel;
 
     public PanelManager(UsuarioService usuarioService, CuentaService cuentaService,
-                        TarjetaService tarjetaService, TransferenciaService transferenciaService) {
-        this.usuarioService       = usuarioService;
-        this.cuentaService        = cuentaService;
-        this.tarjetaService       = tarjetaService;
+                        TarjetaService tarjetaService, TransferenciaService transferenciaService,
+                        MovimientoTarjetaService movimientoTarjetaService) {
+        this.usuarioService = usuarioService;
+        this.cuentaService = cuentaService;
+        this.tarjetaService = tarjetaService;
         this.transferenciaService = transferenciaService;
+        this.movimientoTarjetaService = movimientoTarjetaService;
     }
 
     public void armarManager() {
@@ -54,7 +58,8 @@ public class PanelManager {
 
     public void mostrarFormularioUsuario(Usuario usuario) {
         frame.getContentPane().removeAll();
-        UsuarioFormPanel formulario = new UsuarioFormPanel(this, usuarioService, cuentaService, tarjetaService, usuario);
+        UsuarioFormPanel formulario = new UsuarioFormPanel(
+                this, usuarioService, cuentaService, tarjetaService, movimientoTarjetaService, usuario);
         frame.getContentPane().add(formulario);
         frame.getContentPane().validate();
         frame.getContentPane().repaint();

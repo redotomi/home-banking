@@ -15,7 +15,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CuentaDAOImplH2 implements CuentaDAO {
+public class CuentaDAOImplH2 extends AbstractDAO implements CuentaDAO {
 	public void crearCuenta(Cuenta unaCuenta, int dni) throws DAOException {
 		String nombreCuenta = unaCuenta.getNombreCuenta();
 		String cbu = unaCuenta.getCBU();
@@ -169,19 +169,4 @@ public class CuentaDAOImplH2 implements CuentaDAO {
 		}
 	}
 	
-	private Connection obtenerConexion() throws ConexionDAOException {
-        Connection c = DBManager.connect();
-        if (c == null) {
-            throw new ConexionDAOException("No se pudo establecer conexión con la base de datos");
-        }
-        return c;
-    }
-
-    private void cerrarConexion(Connection c) {
-        try {
-            if (c != null) c.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 }

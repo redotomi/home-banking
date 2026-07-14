@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MovimientoTarjetaDAOImplH2 implements MovimientoTarjetaDAO {
+public class MovimientoTarjetaDAOImplH2 extends AbstractDAO implements MovimientoTarjetaDAO {
 
     public void registrarMovimiento(MovimientoTarjeta movimiento) throws DAOException {
         String sql = "INSERT INTO MOVIMIENTOS (numeroTarjeta, monto, referencia) "
@@ -128,19 +128,4 @@ public class MovimientoTarjetaDAOImplH2 implements MovimientoTarjetaDAO {
         return new MovimientoTarjeta(id, numeroTarjeta, monto, fecha, referencia);
     }
 
-    private Connection obtenerConexion() throws ConexionDAOException {
-        Connection c = DBManager.connect();
-        if (c == null) {
-            throw new ConexionDAOException("No se pudo establecer conexión con la base de datos");
-        }
-        return c;
-    }
-
-    private void cerrarConexion(Connection c) {
-        try {
-            if (c != null) c.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 }

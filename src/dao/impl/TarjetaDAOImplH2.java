@@ -13,7 +13,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TarjetaDAOImplH2 implements TarjetaDAO {
+public class TarjetaDAOImplH2 extends AbstractDAO implements TarjetaDAO {
 
     public void crearTarjeta(Tarjeta tarjeta) throws DAOException {
         String sql = "INSERT INTO TARJETAS (numero, limite, consumo, proveedor, vencimiento, cvv, nombreTitular, dniUsuario) "
@@ -164,19 +164,4 @@ public class TarjetaDAOImplH2 implements TarjetaDAO {
         return new Tarjeta(numero, limite, consumo, proveedor, vencimiento, cvv, nombreTitular, dniUsuario);
     }
 
-    private Connection obtenerConexion() throws ConexionDAOException {
-        Connection c = DBManager.connect();
-        if (c == null) {
-            throw new ConexionDAOException("No se pudo establecer conexión con la base de datos");
-        }
-        return c;
-    }
-
-    private void cerrarConexion(Connection c) {
-        try {
-            if (c != null) c.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 }

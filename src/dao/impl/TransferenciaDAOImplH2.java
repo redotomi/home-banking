@@ -14,7 +14,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TransferenciaDAOImplH2 implements TransferenciaDAO {
+public class TransferenciaDAOImplH2 extends AbstractDAO implements TransferenciaDAO {
 
     public void crearTransferencia(Transferencia unaTransferencia) throws DAOException {
         String cbuOrigen = unaTransferencia.getCbuCuentaOrigen();
@@ -89,19 +89,4 @@ public class TransferenciaDAOImplH2 implements TransferenciaDAO {
         );
     }
 
-    private Connection obtenerConexion() throws ConexionDAOException {
-        Connection c = DBManager.connect();
-        if (c == null) {
-            throw new ConexionDAOException("No se pudo establecer conexión con la base de datos");
-        }
-        return c;
-    }
-
-    private void cerrarConexion(Connection c) {
-        try {
-            if (c != null) c.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 }

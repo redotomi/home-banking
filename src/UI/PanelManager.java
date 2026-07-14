@@ -1,18 +1,26 @@
 package UI;
 
 import UI.cliente.ClientePanel;
+import UI.cliente.ListaMovimientosPanel;
+import UI.cliente.ListaTransferenciasPanel;
 import UI.cliente.TransferenciaFormPanel;
 import UI.formularioUsuario.UsuarioFormPanel;
 import UI.login.LoginPanel;
 import UI.tablaUsuarios.TablaUsuariosPanel;
 import entidades.Cliente;
 import entidades.Cuenta;
+import entidades.MovimientoTarjeta;
+import entidades.Tarjeta;
+import entidades.Transferencia;
 import entidades.Usuario;
+import exceptions.serviceExceptions.ServiceException;
 import service.CuentaService;
 import service.MovimientoTarjetaService;
 import service.TarjetaService;
 import service.TransferenciaService;
 import service.UsuarioService;
+
+import java.util.List;
 
 import javax.swing.*;
 
@@ -84,7 +92,7 @@ public class PanelManager {
     public void mostrarPantallaCliente(Cliente cliente) {
         frame.getContentPane().removeAll();
         frame.setTitle("LaboBank - Mi cuenta");
-        frame.getContentPane().add(new ClientePanel(this, cliente, cuentaService, transferenciaService));
+        frame.getContentPane().add(new ClientePanel(this, cliente, cuentaService, tarjetaService));
         frame.getContentPane().validate();
         frame.getContentPane().repaint();
     }
@@ -93,6 +101,40 @@ public class PanelManager {
         frame.getContentPane().removeAll();
         frame.setTitle("LaboBank - Nueva transferencia");
         frame.getContentPane().add(new TransferenciaFormPanel(cuentaOrigen, cliente, cuentaService, transferenciaService, this));
+        frame.getContentPane().validate();
+        frame.getContentPane().repaint();
+    }
+
+    public void mostrarTransferenciasDeCliente(Cuenta cuenta, Cliente cliente) {
+        List<Transferencia> transferencias;
+        try {
+            transferencias = transferenciaService.listarTransferenciasDeUsuario(cliente.getDni());
+        } catch (ServiceException e) {
+            JOptionPane.showMessageDialog(frame,
+                    "No se pudieron cargar las transferencias: " + e.getMessage(),
+                    "Error del sistema", JOptionPane.ERROR_MESSAGE);
+            transferencias = List.of();
+        }
+        frame.getContentPane().removeAll();
+        frame.setTitle("LaboBank - Transferencias");
+        frame.getContentPane().add(new ListaTransferenciasPanel(this, cliente, transferencias));
+        frame.getContentPane().validate();
+        frame.getContentPane().repaint();
+    }
+
+    public void mostrarMovimientosDeTarjeta(Tarjeta tarjeta, Cliente cliente) {
+        List<MovimientoTarjeta> movimientos;
+        try {
+            movimientos = movimientoTarjetaService.listarMovimientosPorTarjeta(tarjeta.getNumero());
+        } catch (ServiceException e) {
+            JOptionPane.showMessageDialog(frame,
+                    "No se pudieron cargar los movimientos: " + e.getMessage(),
+                    "Error del sistema", JOptionPane.ERROR_MESSAGE);
+            movimientos = List.of();
+        }
+        frame.getContentPane().removeAll();
+        frame.setTitle("LaboBank - Movimientos");
+        frame.getContentPane().add(new ListaMovimientosPanel(this, cliente, tarjeta, movimientos));
         frame.getContentPane().validate();
         frame.getContentPane().repaint();
     }

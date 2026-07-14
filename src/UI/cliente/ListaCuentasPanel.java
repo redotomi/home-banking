@@ -3,8 +3,6 @@ package UI.cliente;
 import UI.PanelManager;
 import entidades.Cliente;
 import entidades.Cuenta;
-import service.CuentaService;
-import service.TransferenciaService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,13 +10,11 @@ import java.util.List;
 
 public class ListaCuentasPanel extends JPanel {
 
-    public ListaCuentasPanel(List<Cuenta> cuentas, PanelManager panelManager, Cliente cliente,
-                             CuentaService cuentaService, TransferenciaService transferenciaService) {
-        armarPanel(cuentas, panelManager, cliente, cuentaService, transferenciaService);
+    public ListaCuentasPanel(List<Cuenta> cuentas, PanelManager panelManager, Cliente cliente) {
+        armarPanel(cuentas, panelManager, cliente);
     }
 
-    private void armarPanel(List<Cuenta> cuentas, PanelManager panelManager, Cliente cliente,
-                            CuentaService cuentaService, TransferenciaService transferenciaService) {
+    private void armarPanel(List<Cuenta> cuentas, PanelManager panelManager, Cliente cliente) {
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
@@ -32,7 +28,7 @@ public class ListaCuentasPanel extends JPanel {
         }
 
         for (Cuenta cuenta : cuentas) {
-            ResumenCuentaPanel card = new ResumenCuentaPanel(cuenta, panelManager, cliente, cuentaService, transferenciaService);
+            ResumenCuentaPanel card = new ResumenCuentaPanel(cuenta, panelManager, cliente);
             card.setMaximumSize(new Dimension(Integer.MAX_VALUE, card.getPreferredSize().height));
             this.add(card);
             this.add(Box.createVerticalStrut(10));

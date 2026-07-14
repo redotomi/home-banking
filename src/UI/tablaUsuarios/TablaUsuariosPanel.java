@@ -9,13 +9,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.print.PageFormat;
-import java.awt.print.Printable;
-import java.awt.print.PrinterException;
-import java.awt.print.PrinterJob;
 import java.util.List;
 
-public class TablaUsuariosPanel extends JPanel implements ActionListener, Printable {
+public class TablaUsuariosPanel extends JPanel implements ActionListener {
     private JTable tablaUsuarios;
     private TablaUsuariosModel model;
     private PanelManager panelManager;
@@ -25,7 +21,7 @@ public class TablaUsuariosPanel extends JPanel implements ActionListener, Printa
     private JButton botonAgregar;
     private JButton botonEditar;
     private JButton botonEliminar;
-    private JButton botonImprimir;
+    private JButton botonCerrarSesion;
 
     private UsuarioService usuarioService;
 
@@ -62,26 +58,17 @@ public class TablaUsuariosPanel extends JPanel implements ActionListener, Printa
         botonEliminar.addActionListener(this);
         panelBotones.add(botonEliminar);
 
-        botonImprimir = new JButton("Imprimir Tabla");
-        botonImprimir.addActionListener(this);
-        panelBotones.add(botonImprimir);
+        botonCerrarSesion = new JButton("Cerrar sesión");
+        botonCerrarSesion.addActionListener(this);
+        panelBotones.add(botonCerrarSesion);
 
         this.add(panelBotones, BorderLayout.SOUTH);
 
     }
 
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == botonImprimir) {
-            PrinterJob job = PrinterJob.getPrinterJob();
-            job.setPrintable(this);
-            boolean ok = job.printDialog();
-            if (ok) {
-                try {
-                    job.print();
-                } catch (PrinterException ex) {
-                    /* The job did not successfully complete */
-                }
-            }
+        if (e.getSource() == botonCerrarSesion) {
+            panelManager.mostrarLoginPanel();
 
         } else if (e.getSource() == botonEliminar) {
             int filaSeleccionada = tablaUsuarios.getSelectedRow();
@@ -125,11 +112,5 @@ public class TablaUsuariosPanel extends JPanel implements ActionListener, Printa
                 ex.printStackTrace();
             }
         }
-    }
-
-    @Override
-    public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
-        System.out.println("imprimo");
-        return 0;
     }
 }

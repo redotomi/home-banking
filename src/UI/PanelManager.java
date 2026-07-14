@@ -44,6 +44,16 @@ public class PanelManager {
         this.movimientoTarjetaService = movimientoTarjetaService;
     }
 
+    private void cambiarPanel(JPanel panel, String titulo) {
+        frame.getContentPane().removeAll();
+        if (titulo != null) {
+            frame.setTitle(titulo);
+        }
+        frame.getContentPane().add(panel);
+        frame.getContentPane().validate();
+        frame.getContentPane().repaint();
+    }
+
     public void armarManager() {
         frame = new JFrame();
         frame.setBounds(100, 100, 1280, 720);
@@ -57,52 +67,30 @@ public class PanelManager {
     }
 
     public void mostrarTablaUsuariosPanel() {
-        frame.getContentPane().removeAll();
-        frame.setTitle("LaboBank - Admin");
-        frame.getContentPane().add(tablaUsuariosPanel);
-        frame.getContentPane().validate();
-        frame.getContentPane().repaint();
+        cambiarPanel(tablaUsuariosPanel, "LaboBank - Admin");
     }
 
     public void mostrarFormularioUsuario(Usuario usuario) {
-        frame.getContentPane().removeAll();
         UsuarioFormPanel formulario = new UsuarioFormPanel(
                 this, usuarioService, cuentaService, tarjetaService, movimientoTarjetaService, usuario);
-        frame.getContentPane().add(formulario);
-        frame.getContentPane().validate();
-        frame.getContentPane().repaint();
+        cambiarPanel(formulario, null);
     }
 
     public void mostrarFormularioRegistro() {
-        frame.getContentPane().removeAll();
         UsuarioFormPanel formulario = new UsuarioFormPanel(this, usuarioService, null, true);
-        frame.getContentPane().add(formulario);
-        frame.getContentPane().validate();
-        frame.getContentPane().repaint();
+        cambiarPanel(formulario, null);
     }
 
     public void mostrarLoginPanel() {
-        frame.getContentPane().removeAll();
-        frame.setTitle("LaboBank");
-        frame.getContentPane().add(new LoginPanel(this, usuarioService));
-        frame.getContentPane().validate();
-        frame.getContentPane().repaint();
+        cambiarPanel(new LoginPanel(this, usuarioService), "LaboBank");
     }
 
     public void mostrarPantallaCliente(Cliente cliente) {
-        frame.getContentPane().removeAll();
-        frame.setTitle("LaboBank - Mi cuenta");
-        frame.getContentPane().add(new ClientePanel(this, cliente, cuentaService, tarjetaService));
-        frame.getContentPane().validate();
-        frame.getContentPane().repaint();
+        cambiarPanel(new ClientePanel(this, cliente, cuentaService, tarjetaService), "LaboBank - Mi cuenta");
     }
 
     public void mostrarFormularioTransferencia(Cuenta cuentaOrigen, Cliente cliente) {
-        frame.getContentPane().removeAll();
-        frame.setTitle("LaboBank - Nueva transferencia");
-        frame.getContentPane().add(new TransferenciaFormPanel(cuentaOrigen, cliente, cuentaService, transferenciaService, this));
-        frame.getContentPane().validate();
-        frame.getContentPane().repaint();
+        cambiarPanel(new TransferenciaFormPanel(cuentaOrigen, cliente, cuentaService, transferenciaService, this), "LaboBank - Nueva transferencia");
     }
 
     public void mostrarTransferenciasDeCliente(Cuenta cuenta, Cliente cliente) {
@@ -115,11 +103,7 @@ public class PanelManager {
                     "Error del sistema", JOptionPane.ERROR_MESSAGE);
             transferencias = List.of();
         }
-        frame.getContentPane().removeAll();
-        frame.setTitle("LaboBank - Transferencias");
-        frame.getContentPane().add(new ListaTransferenciasPanel(this, cliente, transferencias));
-        frame.getContentPane().validate();
-        frame.getContentPane().repaint();
+        cambiarPanel(new ListaTransferenciasPanel(this, cliente, transferencias), "LaboBank - Transferencias");
     }
 
     public void mostrarMovimientosDeTarjeta(Tarjeta tarjeta, Cliente cliente) {
@@ -132,10 +116,6 @@ public class PanelManager {
                     "Error del sistema", JOptionPane.ERROR_MESSAGE);
             movimientos = List.of();
         }
-        frame.getContentPane().removeAll();
-        frame.setTitle("LaboBank - Movimientos");
-        frame.getContentPane().add(new ListaMovimientosPanel(this, cliente, tarjeta, movimientos));
-        frame.getContentPane().validate();
-        frame.getContentPane().repaint();
+        cambiarPanel(new ListaMovimientosPanel(this, cliente, tarjeta, movimientos), "LaboBank - Movimientos");
     }
 }

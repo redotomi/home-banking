@@ -1,4 +1,4 @@
-package UI.cliente;
+package UI.cliente.tarjetas;
 
 import UI.PanelManager;
 import entidades.Cliente;

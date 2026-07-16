@@ -7,6 +7,8 @@ import entidades.Tarjeta;
 import exceptions.serviceExceptions.ServiceException;
 import service.CuentaService;
 import service.TarjetaService;
+import UI.cliente.cuentas.ListaCuentasPanel;
+import UI.cliente.tarjetas.ListaTarjetasPanel;
 
 import javax.swing.*;
 import java.awt.*;

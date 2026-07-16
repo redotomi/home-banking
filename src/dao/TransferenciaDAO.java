@@ -11,4 +11,6 @@ public interface TransferenciaDAO {
     Transferencia muestraTransferencia(int idTransferencia) throws DAOException;
 
     List<Transferencia> listaTransferenciasUsuario(int dniUsuario) throws DAOException;
+
+    List<Transferencia> listaTransferenciasCuenta(String cbu) throws DAOException;
 }

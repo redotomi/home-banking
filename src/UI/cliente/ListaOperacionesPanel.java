@@ -7,12 +7,6 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-/**
- * Panel base para listados de operaciones (transferencias, movimientos, etc.).
- * Las subclases definen las columnas, los datos y el título.
- * Los datos deben pasarse ya cargados al constructor para evitar llamar
- * servicios durante el armado del panel.
- */
 public abstract class ListaOperacionesPanel extends JPanel {
 
     protected final PanelManager panelManager;
@@ -21,8 +15,6 @@ public abstract class ListaOperacionesPanel extends JPanel {
     protected ListaOperacionesPanel(PanelManager panelManager, Cliente cliente) {
         this.panelManager = panelManager;
         this.cliente = cliente;
-        // No llamar armarPanel() aquí: las subclases deben invocarlo al
-        // final de su propio constructor, una vez inicializados sus campos.
     }
 
     protected void armarPanel() {
@@ -62,23 +54,17 @@ public abstract class ListaOperacionesPanel extends JPanel {
         return scroll;
     }
 
-    private JPanel buildPie() {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+    protected JPanel buildPie() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         JButton botonVolver = new JButton("Volver");
         botonVolver.addActionListener(e -> panelManager.mostrarPantallaCliente(cliente));
         panel.add(botonVolver);
         return panel;
     }
 
-    /** Título que se muestra en el encabezado. */
     protected abstract String getTitulo();
 
-    /** Nombres de las columnas de la tabla. */
     protected abstract String[] getColumnas();
 
-    /**
-     * Datos a mostrar en la tabla.
-     * Los datos deben venir pre-cargados; este método no debe lanzar excepciones.
-     */
     protected abstract Object[][] getFilas();
 }

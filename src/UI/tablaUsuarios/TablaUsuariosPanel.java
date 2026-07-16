@@ -50,7 +50,7 @@ public class TablaUsuariosPanel extends JPanel implements ActionListener {
         botonAgregar.addActionListener(this);
         panelBotones.add(botonAgregar);
 
-        botonEditar = new JButton("Editar usuario");
+        botonEditar = new JButton("Detalles usuario");
         botonEditar.addActionListener(this);
         panelBotones.add(botonEditar);
 

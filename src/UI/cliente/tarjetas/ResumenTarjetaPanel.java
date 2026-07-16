@@ -1,6 +1,7 @@
-package UI.cliente;
+package UI.cliente.tarjetas;
 
 import UI.PanelManager;
+import UI.cliente.ResumenPanel;
 import entidades.Cliente;
 import entidades.Tarjeta;
 

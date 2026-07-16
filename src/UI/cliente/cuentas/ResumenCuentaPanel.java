@@ -1,6 +1,7 @@
-package UI.cliente;
+package UI.cliente.cuentas;
 
 import UI.PanelManager;
+import UI.cliente.ResumenPanel;
 import entidades.Cliente;
 import entidades.Cuenta;
 

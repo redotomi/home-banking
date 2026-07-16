@@ -67,6 +67,14 @@ public class TransferenciaService {
         }
     }
 
+    public List<Transferencia> listarTransferenciasDeCuenta(String cbu) throws ServiceException {
+        try {
+            return transferenciaDAO.listaTransferenciasCuenta(cbu);
+        } catch (DAOException e) {
+            throw new ServiceException("Error al obtener las transferencias de la cuenta: " + cbu, e);
+        }
+    }
+
     private void validarMonedas(Cuenta origen, Cuenta destino) throws MonedasIncompatiblesException {
         if (!origen.getMoneda().equals(destino.getMoneda())) {
             throw new MonedasIncompatiblesException(origen.getMoneda(), destino.getMoneda());

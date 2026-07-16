@@ -1,4 +1,4 @@
-package UI.cliente;
+package UI.cliente.cuentas;
 
 import UI.PanelManager;
 import entidades.Cliente;

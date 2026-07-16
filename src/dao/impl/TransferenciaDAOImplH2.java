@@ -78,6 +78,26 @@ public class TransferenciaDAOImplH2 extends AbstractDAO implements Transferencia
         }
     }
 
+    public List<Transferencia> listaTransferenciasCuenta(String cbu) throws DAOException {
+        String sql = "SELECT * FROM transferencias "
+                   + "WHERE cbucuentaorigen = '" + cbu + "' OR cbucuentadestino = '" + cbu + "' "
+                   + "ORDER BY fecha DESC";
+        Connection c = obtenerConexion();
+        try {
+            Statement s = c.createStatement();
+            ResultSet rs = s.executeQuery(sql);
+            List<Transferencia> transferencias = new ArrayList<>();
+            while (rs.next()) {
+                transferencias.add(mapearTransferencia(rs));
+            }
+            return transferencias;
+        } catch (SQLException e) {
+            throw new DAOException("Error al listar las transferencias de la cuenta: " + cbu, e);
+        } finally {
+            cerrarConexion(c);
+        }
+    }
+
     private Transferencia mapearTransferencia(ResultSet rs) throws SQLException {
         return new Transferencia(
                 rs.getInt("id"),

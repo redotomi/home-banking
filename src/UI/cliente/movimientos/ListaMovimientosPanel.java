@@ -1,6 +1,7 @@
-package UI.cliente;
+package UI.cliente.movimientos;
 
 import UI.PanelManager;
+import UI.cliente.ListaOperacionesPanel;
 import entidades.Cliente;
 import entidades.MovimientoTarjeta;
 import entidades.Tarjeta;

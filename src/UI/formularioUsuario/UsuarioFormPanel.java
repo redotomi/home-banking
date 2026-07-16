@@ -16,9 +16,9 @@ import javax.swing.*;
 
 public class UsuarioFormPanel extends AbstractPantallaAltaPanel {
 
-    private final UsuarioService          usuarioService;
-    private final CuentaService           cuentaService;
-    private final TarjetaService          tarjetaService;
+    private final UsuarioService usuarioService;
+    private final CuentaService cuentaService;
+    private final TarjetaService tarjetaService;
     private final MovimientoTarjetaService movimientoTarjetaService;
     private final Usuario usuarioAEditar;
     private final boolean modoRegistro;
@@ -42,12 +42,12 @@ public class UsuarioFormPanel extends AbstractPantallaAltaPanel {
                             MovimientoTarjetaService movimientoTarjetaService,
                             Usuario usuarioAEditar, boolean modoRegistro) {
         super(panelManager);
-        this.usuarioService           = usuarioService;
-        this.cuentaService            = cuentaService;
-        this.tarjetaService           = tarjetaService;
-        this.movimientoTarjetaService  = movimientoTarjetaService;
-        this.usuarioAEditar           = usuarioAEditar;
-        this.modoRegistro             = modoRegistro;
+        this.usuarioService = usuarioService;
+        this.cuentaService = cuentaService;
+        this.tarjetaService = tarjetaService;
+        this.movimientoTarjetaService = movimientoTarjetaService;
+        this.usuarioAEditar = usuarioAEditar;
+        this.modoRegistro = modoRegistro;
         armarPanel();
     }
 

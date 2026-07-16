@@ -15,18 +15,15 @@ import java.awt.*;
 
 public class EditarClienteCompositePanel extends CamposPanel {
 
-    private final CamposUsuarioPanel      camposUsuarioPanel;
-    private final CuentasClientePanel     cuentasClientePanel;
-    private final TarjetasClientePanel    tarjetasClientePanel;
+    private final CamposUsuarioPanel camposUsuarioPanel;
+    private final CuentasClientePanel cuentasClientePanel;
+    private final TarjetasClientePanel tarjetasClientePanel;
     private final MovimientosClientePanel movimientosClientePanel;
 
-    public EditarClienteCompositePanel(Usuario cliente,
-                                       CuentaService cuentaService,
-                                       TarjetaService tarjetaService,
-                                       MovimientoTarjetaService movimientoTarjetaService) {
-        this.camposUsuarioPanel      = new CamposUsuarioPanel(cliente);
-        this.cuentasClientePanel     = new CuentasClientePanel(cliente, cuentaService);
-        this.tarjetasClientePanel    = new TarjetasClientePanel(cliente, tarjetaService);
+    public EditarClienteCompositePanel(Usuario cliente, CuentaService cuentaService, TarjetaService tarjetaService, MovimientoTarjetaService movimientoTarjetaService) {
+        this.camposUsuarioPanel = new CamposUsuarioPanel(cliente);
+        this.cuentasClientePanel = new CuentasClientePanel(cliente, cuentaService);
+        this.tarjetasClientePanel = new TarjetasClientePanel(cliente, tarjetaService);
         this.movimientosClientePanel = new MovimientosClientePanel(movimientoTarjetaService);
 
         armarFormulario();
@@ -37,18 +34,15 @@ public class EditarClienteCompositePanel extends CamposPanel {
     public void armarFormulario() {
         this.setLayout(new BorderLayout(0, 16));
 
-        // ── Datos del usuario ──────────────────────────────────────────────
         JPanel wrapperCampos = new JPanel(new BorderLayout());
         wrapperCampos.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createEtchedBorder(), "Datos del usuario"));
         wrapperCampos.add(camposUsuarioPanel, BorderLayout.CENTER);
 
-        // ── Fila superior: Cuentas | Tarjetas ─────────────────────────────
         JPanel panelTablas = new JPanel(new GridLayout(1, 2, 8, 0));
         panelTablas.add(cuentasClientePanel);
         panelTablas.add(tarjetasClientePanel);
 
-        // ── Zona central: tablas arriba + movimientos abajo ───────────────
         JPanel panelCentral = new JPanel(new BorderLayout(0, 8));
         panelCentral.add(panelTablas, BorderLayout.CENTER);
         panelCentral.add(movimientosClientePanel, BorderLayout.SOUTH);
@@ -61,13 +55,6 @@ public class EditarClienteCompositePanel extends CamposPanel {
         return camposUsuarioPanel;
     }
 
-    // ── Conexión de eventos ────────────────────────────────────────────────
-
-    /**
-     * Agrega un {@link ListSelectionListener} a la tabla de tarjetas para que,
-     * al seleccionar una fila, el panel de movimientos se actualice automáticamente.
-     * Si se deselecciona (valueIsAdjusting == false y sin selección), limpia el panel.
-     */
     private void conectarSeleccionTarjeta() {
         tarjetasClientePanel.getTabla().getSelectionModel()
                 .addListSelectionListener(new ListSelectionListener() {

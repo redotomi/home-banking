@@ -1,9 +1,9 @@
 package UI;
 
 import UI.cliente.ClientePanel;
-import UI.cliente.ListaMovimientosPanel;
-import UI.cliente.ListaTransferenciasPanel;
-import UI.cliente.TransferenciaFormPanel;
+import UI.cliente.movimientos.ListaMovimientosPanel;
+import UI.cliente.transferencias.ListaTransferenciasPanel;
+import UI.cliente.transferencias.TransferenciaFormPanel;
 import UI.formularioUsuario.UsuarioFormPanel;
 import UI.login.LoginPanel;
 import UI.tablaUsuarios.TablaUsuariosPanel;
@@ -96,14 +96,14 @@ public class PanelManager {
     public void mostrarTransferenciasDeCliente(Cuenta cuenta, Cliente cliente) {
         List<Transferencia> transferencias;
         try {
-            transferencias = transferenciaService.listarTransferenciasDeUsuario(cliente.getDni());
+            transferencias = transferenciaService.listarTransferenciasDeCuenta(cuenta.getCBU());
         } catch (ServiceException e) {
             JOptionPane.showMessageDialog(frame,
                     "No se pudieron cargar las transferencias: " + e.getMessage(),
                     "Error del sistema", JOptionPane.ERROR_MESSAGE);
             transferencias = List.of();
         }
-        cambiarPanel(new ListaTransferenciasPanel(this, cliente, transferencias), "LaboBank - Transferencias");
+        cambiarPanel(new ListaTransferenciasPanel(this, cliente, cuenta, transferencias), "LaboBank - Transferencias");
     }
 
     public void mostrarMovimientosDeTarjeta(Tarjeta tarjeta, Cliente cliente) {

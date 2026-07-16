@@ -11,14 +11,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Panel que muestra el historial de movimientos de una tarjeta seleccionada
- * y permite registrar nuevos débitos directamente, sin abrir ningún diálogo modal.
- *
- * <p>Se activa llamando a {@link #cargarTarjeta(String)} cuando el administrador
- * selecciona una fila en {@link TarjetasClientePanel}. Mientras no haya selección,
- * los controles permanecen deshabilitados.</p>
- */
 public class MovimientosClientePanel extends CamposPanel {
 
     private static final String[] COLUMNAS = { "Fecha", "Referencia", "Monto ($)" };
@@ -28,9 +20,9 @@ public class MovimientosClientePanel extends CamposPanel {
     private final MovimientoTarjetaService movimientoService;
 
     private TablaConAccionPanel tablaPanel;
-    private JTextField          campoMonto;
-    private JTextField          campoReferencia;
-    private JButton             botonRegistrar;
+    private JTextField campoMonto;
+    private JTextField campoReferencia;
+    private JButton botonRegistrar;
 
     private String numeroTarjetaActual;
 
@@ -43,10 +35,9 @@ public class MovimientosClientePanel extends CamposPanel {
     public void armarFormulario() {
         this.setLayout(new BorderLayout());
 
-        // ── Panel sur: formulario inline de nuevo débito ──────────────────
-        campoMonto      = new JTextField(8);
+        campoMonto = new JTextField(8);
         campoReferencia = new JTextField(20);
-        botonRegistrar  = new JButton("Registrar débito");
+        botonRegistrar = new JButton("Registrar débito");
 
         campoMonto.setEnabled(false);
         campoReferencia.setEnabled(false);
@@ -61,17 +52,10 @@ public class MovimientosClientePanel extends CamposPanel {
         panelSur.add(campoReferencia);
         panelSur.add(botonRegistrar);
 
-        // ── Tabla ──────────────────────────────────────────────────────────
         tablaPanel = new TablaConAccionPanel(TITULO_SIN_SELECCION, COLUMNAS, panelSur);
         this.add(tablaPanel, BorderLayout.CENTER);
     }
 
-    /**
-     * Carga el historial de movimientos de la tarjeta indicada y habilita
-     * los controles para registrar un nuevo débito.
-     *
-     * @param numeroTarjeta número de tarjeta seleccionado (formato 'XXXX XXXX XXXX XXXX')
-     */
     public void cargarTarjeta(String numeroTarjeta) {
         this.numeroTarjetaActual = numeroTarjeta;
         actualizarTitulo(TITULO_CON_TARJETA + numeroTarjeta);
@@ -79,7 +63,6 @@ public class MovimientosClientePanel extends CamposPanel {
         recargarTabla();
     }
 
-    /** Limpia el panel y deshabilita los controles (cuando se deselecciona la tarjeta). */
     public void limpiar() {
         this.numeroTarjetaActual = null;
         actualizarTitulo(TITULO_SIN_SELECCION);
@@ -87,11 +70,9 @@ public class MovimientosClientePanel extends CamposPanel {
         tablaPanel.recargarFilas(new ArrayList<>());
     }
 
-    // ── Internals ──────────────────────────────────────────────────────────
-
     private void registrarDebito() {
-        String montoTexto   = campoMonto.getText().trim();
-        String referencia   = campoReferencia.getText().trim();
+        String montoTexto = campoMonto.getText().trim();
+        String referencia = campoReferencia.getText().trim();
 
         int monto;
         try {

@@ -12,23 +12,29 @@ import exceptions.serviceExceptions.ServiceException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
+import service.validadores.ValidadorTransferencia;
 
 public class TransferenciaService {
 
     private final TransferenciaDAO transferenciaDAO;
     private final CuentaService cuentaService;
+    private final List<ValidadorTransferencia> validadores;
 
-    public TransferenciaService(TransferenciaDAO transferenciaDAO, CuentaService cuentaService) {
+    public TransferenciaService(TransferenciaDAO transferenciaDAO, CuentaService cuentaService, List<ValidadorTransferencia> validadores) {
         this.transferenciaDAO = transferenciaDAO;
         this.cuentaService = cuentaService;
+        this.validadores = validadores;
     }
 
     public void realizarTransferencia(String cbuOrigen, String cbuDestino, int monto) throws ServiceException {
         Cuenta origen  = cuentaService.muestraCuenta(cbuOrigen);
         Cuenta destino = cuentaService.muestraCuenta(cbuDestino);
 
-        validarMonedas(origen, destino);
-        validarSaldo(origen, monto);
+        if (validadores != null) {
+            for (ValidadorTransferencia validador : validadores) {
+                validador.validar(origen, destino, monto);
+            }
+        }
 
         int nuevoSaldoOrigen  = origen.getMonto() - monto;
         int nuevoSaldoDestino = destino.getMonto() + monto;
@@ -75,15 +81,4 @@ public class TransferenciaService {
         }
     }
 
-    private void validarMonedas(Cuenta origen, Cuenta destino) throws MonedasIncompatiblesException {
-        if (!origen.getMoneda().equals(destino.getMoneda())) {
-            throw new MonedasIncompatiblesException(origen.getMoneda(), destino.getMoneda());
-        }
-    }
-
-    private void validarSaldo(Cuenta origen, int monto) throws SaldoInsuficienteException {
-        if (origen.getMonto() < monto) {
-            throw new SaldoInsuficienteException(origen.getMonto(), monto);
-        }
-    }
 }

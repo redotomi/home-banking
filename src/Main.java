@@ -12,6 +12,9 @@ import service.UsuarioService;
 import util.TableManager;
 
 import javax.swing.*;
+import java.util.Arrays;
+import service.validadores.ValidadorMonedasCompatibles;
+import service.validadores.ValidadorSaldoSuficiente;
 
 public class Main {
     UsuarioDAOImplH2 usuarioDAO = new UsuarioDAOImplH2();
@@ -22,7 +25,11 @@ public class Main {
     CuentaService cuentaService = new CuentaService(cuentaDAO);
     TarjetaService tarjetaService = new TarjetaService(tarjetaDAO);
     UsuarioService usuarioService = new UsuarioService(usuarioDAO, cuentaService);
-    TransferenciaService transferenciaService = new TransferenciaService(transferenciaDAO, cuentaService);
+    TransferenciaService transferenciaService = new TransferenciaService(
+            transferenciaDAO, 
+            cuentaService, 
+            Arrays.asList(new ValidadorMonedasCompatibles(), new ValidadorSaldoSuficiente())
+    );
     MovimientoTarjetaService movimientoTarjetaService = new MovimientoTarjetaService(movimientoDAO, tarjetaService);
 
     private PanelManager manager;

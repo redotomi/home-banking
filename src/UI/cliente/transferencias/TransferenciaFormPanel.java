@@ -5,6 +5,7 @@ import entidades.Cliente;
 import entidades.Cuenta;
 import exceptions.serviceExceptions.CuentaNoEncontradaException;
 import exceptions.serviceExceptions.ServiceException;
+import exceptions.UIExceptions.EntradaInvalidaException;
 import service.CuentaService;
 import service.TransferenciaService;
 
@@ -141,9 +142,13 @@ public class TransferenciaFormPanel extends JPanel {
         int monto;
         try {
             monto = Integer.parseInt(campoMonto.getText().trim());
-            if (monto <= 0) throw new NumberFormatException();
+            if (monto <= 0) throw new EntradaInvalidaException("El monto debe ser mayor a 0.");
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "El monto debe ser un número entero mayor a 0.",
+            JOptionPane.showMessageDialog(this, "El monto debe ser un número entero válido.",
+                    "Monto inválido", JOptionPane.WARNING_MESSAGE);
+            return;
+        } catch (EntradaInvalidaException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(),
                     "Monto inválido", JOptionPane.WARNING_MESSAGE);
             return;
         }

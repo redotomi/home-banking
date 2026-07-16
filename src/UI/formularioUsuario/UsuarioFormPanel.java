@@ -55,7 +55,7 @@ public class UsuarioFormPanel extends AbstractPantallaAltaPanel {
     protected void inicializarCampos() {
         boolean editandoCliente = (usuarioAEditar instanceof Cliente) && (cuentaService != null);
         if (editandoCliente) {
-            this.camposPanel = new EditarClienteCompositePanel(
+            this.camposPanel = new EditarClientePanel(
                     usuarioAEditar, cuentaService, tarjetaService, movimientoTarjetaService);
         } else {
             this.camposPanel = new CamposUsuarioPanel(usuarioAEditar);
@@ -70,15 +70,15 @@ public class UsuarioFormPanel extends AbstractPantallaAltaPanel {
     @Override
     protected void ejecutarAccionOk() {
         CamposUsuarioPanel campos;
-        if (this.camposPanel instanceof EditarClienteCompositePanel) {
-            campos = ((EditarClienteCompositePanel) this.camposPanel).getCamposUsuarioPanel();
+        if (this.camposPanel instanceof EditarClientePanel) {
+            campos = ((EditarClientePanel) this.camposPanel).getCamposUsuarioPanel();
         } else {
             campos = (CamposUsuarioPanel) this.camposPanel;
         }
 
         try {
-            int    dni      = parsearCampos(campos);
-            String nombre   = campos.getCampoNombre().getText().trim();
+            int dni = parsearCampos(campos);
+            String nombre = campos.getCampoNombre().getText().trim();
             String apellido = campos.getCampoApellido().getText().trim();
 
             if (usuarioAEditar == null) {

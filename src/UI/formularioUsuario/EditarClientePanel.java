@@ -13,14 +13,14 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 
-public class EditarClienteCompositePanel extends CamposPanel {
+public class EditarClientePanel extends CamposPanel {
 
     private final CamposUsuarioPanel camposUsuarioPanel;
     private final CuentasClientePanel cuentasClientePanel;
     private final TarjetasClientePanel tarjetasClientePanel;
     private final MovimientosClientePanel movimientosClientePanel;
 
-    public EditarClienteCompositePanel(Usuario cliente, CuentaService cuentaService, TarjetaService tarjetaService, MovimientoTarjetaService movimientoTarjetaService) {
+    public EditarClientePanel(Usuario cliente, CuentaService cuentaService, TarjetaService tarjetaService, MovimientoTarjetaService movimientoTarjetaService) {
         this.camposUsuarioPanel = new CamposUsuarioPanel(cliente);
         this.cuentasClientePanel = new CuentasClientePanel(cliente, cuentaService);
         this.tarjetasClientePanel = new TarjetasClientePanel(cliente, tarjetaService);
@@ -35,8 +35,7 @@ public class EditarClienteCompositePanel extends CamposPanel {
         this.setLayout(new BorderLayout(0, 16));
 
         JPanel wrapperCampos = new JPanel(new BorderLayout());
-        wrapperCampos.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createEtchedBorder(), "Datos del usuario"));
+        wrapperCampos.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Datos del usuario"));
         wrapperCampos.add(camposUsuarioPanel, BorderLayout.CENTER);
 
         JPanel panelTablas = new JPanel(new GridLayout(1, 2, 8, 0));
